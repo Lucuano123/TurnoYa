@@ -1,24 +1,24 @@
 {
-  "name": "turnero_profesional",
+  "name": "characters",
   "version": "1.0.0",
-  "description": "TP_1",
-  "homepage": "https://github.com/Lucuano123/Turnero_Profesional#readme",
-  "bugs": {
-    "url": "https://github.com/Lucuano123/Turnero_Profesional/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Lucuano123/Turnero_Profesional.git"
-  },
+  "description": "",
   "license": "ISC",
-  "author": "JH",
-  "type": "commonjs",
-  "main": "app.ts",
+  "author": "",
+  "type": "module",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ./tsconfig.json",
+    "startdev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\""
   },
   "devDependencies": {
-    "tsc-watch": "^7.1.1",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
+    "tsc-watch": "^6.3.1",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
   }
 }
