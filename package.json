@@ -1,0 +1,24 @@
+{
+  "name": "turnero_profesional",
+  "version": "1.0.0",
+  "description": "TP_1",
+  "homepage": "https://github.com/Lucuano123/Turnero_Profesional#readme",
+  "bugs": {
+    "url": "https://github.com/Lucuano123/Turnero_Profesional/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucuano123/Turnero_Profesional.git"
+  },
+  "license": "ISC",
+  "author": "JH",
+  "type": "commonjs",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "tsc-watch": "^7.1.1",
+    "typescript": "^5.8.3"
+  }
+}
