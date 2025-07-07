@@ -1,10 +1,10 @@
-import { Custumer } from "./custumer.entity.js";
+import { Customer } from "./customer.entity.js";
 
-export interface CustumerRepository {
-    findAll(): Promise<Custumer[] | undefined>;
-    findOne(id: string): Promise<Custumer | undefined>;
-    add(custumer: Custumer): Promise<Custumer | undefined>;
-    update(id: string, custumer: Custumer): Promise<Custumer | undefined>;
-    partialUpdate(id: string, updates: Partial<Custumer>): Promise<Custumer | undefined>;
-    delete(id: string): Promise<Custumer | undefined>;
+export interface CustomerRepository {
+    findAll(): Promise<Customer[] | undefined>;
+    findOne(id: string): Promise<Customer | undefined>;
+    add(customer: Customer): Promise<Customer | undefined>;
+    update(id: string, customer: Customer): Promise<Customer | undefined>;
+    partialUpdate(id: string, updates: Partial<Customer>): Promise<Customer | undefined>;
+    delete(id: string): Promise<Customer | undefined>;
 }
