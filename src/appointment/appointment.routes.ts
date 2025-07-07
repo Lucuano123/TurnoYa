@@ -15,8 +15,8 @@ function sanitizeAppointmentInput(req:any, res:any, next:any) {
   req.body.sanitizedInput = {
     date: req.body.date,
     time: req.body.time,
-    custumer_name: req.body.custumer_name,
-    custumer_email: req.body.custumer_email,
+    customer_name: req.body.customer_name,
+    customer_email: req.body.customer_email,
     booked_service: req.body.booked_service,
     status: req.body.status
   }
