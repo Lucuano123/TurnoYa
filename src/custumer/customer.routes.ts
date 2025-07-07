@@ -1,20 +1,20 @@
 import { Router } from "express";
-import { CustumerController } from './custumer.controller.js';
+import { CustomerController } from './customer.controller.js';
 
-export const custumerRouter = Router();
-const custumerController = new CustumerController();
+export const customerRouter = Router();
+const customerController = new CustomerController();
 
-custumerRouter.get('/', custumerController.findAllCustumers);
-custumerRouter.get('/:id', custumerController.findCustumerById);
-custumerRouter.post('/', sanitizeCustumerInput, custumerController.addCustumer);
-custumerRouter.put('/:id', sanitizeCustumerInput, custumerController.updateCustumer);
-custumerRouter.delete('/:id', custumerController.deleteCustumer);  
+customerRouter.get('/', customerController.findAllCustomers);
+customerRouter.get('/:id', customerController.findCustomerById);
+customerRouter.post('/', sanitizeCustomerInput, customerController.addCustomer);
+customerRouter.put('/:id', sanitizeCustomerInput, customerController.updateCustomer);
+customerRouter.delete('/:id', customerController.deleteCustomer);  
 
-function sanitizeCustumerInput(req:any, res:any, next:any) {
+function sanitizeCustomerInput(req:any, res:any, next:any) {
 
   req.body.sanitizedInput = {
     name: req.body.name,
-    custumerClass: req.body.custumerClass,
+    customerClass: req.body.customerClass,
     level: req.body.level,
     hp: req.body.hp,
     mana: req.body.mana,
