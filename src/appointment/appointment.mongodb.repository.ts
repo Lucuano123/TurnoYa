@@ -3,14 +3,14 @@ import { Appointment } from "./appointment.entity.js";
 import { MongoClient, ObjectId } from "mongodb";
 
 const uri = process.env.MONGODB_URI || 'mongodb://root:example@localhost:27017/';
-const mongoCustumer = new MongoClient(uri);
-const db = mongoCustumer.db(process.env.MONGODB_DB || 'appointments');
+const mongoCustomer = new MongoClient(uri);
+const db = mongoCustomer.db(process.env.MONGODB_DB || 'appointments');
 const appointments = db.collection<Appointment>('appointments');
 
 export class AppointmentMongoRepository implements AppointmentRepository {
 
     constructor() {
-        mongoCustumer.connect();
+        mongoCustomer.connect();
     }
 
     async findAll(): Promise<Appointment[] | undefined> {
