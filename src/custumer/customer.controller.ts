@@ -1,54 +1,54 @@
 import { Request, Response } from 'express';
-import { Custumer } from './custumer.entity.js';
-import { CustumerMongoRepository } from './custumer.mongodb.repository.js';
-import { CustumerPostgresRepository } from './custumer.postgres.repository.js';
+import { Customer } from './customer.entity.js';
+import { CustomerMongoRepository } from './customer.mongodb.repository.js';
+import { CustomerPostgresRepository } from './customer.postgres.repository.js';
 
 
-const custumerRepository = new CustumerMongoRepository();
-//const custumerRepository = new CustumerPostgresRepository();
+const customerRepository = new CustomerMongoRepository();
+//const customerRepository = new CustomerPostgresRepository();
 
-export class CustumerController {
+export class CustomerController {
 
-    async findAllCustumers(req: Request, res: Response) {
-        const custumers = await custumerRepository.findAll();
-        res.json(custumers);
+    async findAllCustomers(req: Request, res: Response) {
+        const customers = await customerRepository.findAll();
+        res.json(customers);
     }
 
-    async findCustumerById(req: Request, res: Response) {
-        const custumerId = req.params.id;
-        const custumer = await custumerRepository.findOne(custumerId);
-        if (!custumer) {
+    async findCustomerById(req: Request, res: Response) {
+        const customerId = req.params.id;
+        const customer = await customerRepository.findOne(customerId);
+        if (!customer) {
             res.status(404).json({
-                errorMessage: 'Custumer not found',
+                errorMessage: 'Customer not found',
                 errorCode: 'CHARACTER_NOT_FOUND'
             });
             return;
         }
-        res.json({ data: custumer });
+        res.json({ data: customer });
     }
 
-    async addCustumer(req: Request, res: Response) {
+    async addCustomer(req: Request, res: Response) {
 
         const input = req.body;
-        const newCustumer = new Custumer(
+        const newCustomer = new Customer(
             input.name,
             input.lastname,
             input.cellphone,
             input.email
         );
 
-        await custumerRepository.add(newCustumer);
+        await customerRepository.add(newCustomer);
 
-        res.status(201).json({ data: newCustumer });
+        res.status(201).json({ data: newCustomer });
 
     }
 
-    updateCustumer(req: Request, res: Response) {
-        // Logic to update an existing custumer
+    updateCustomer(req: Request, res: Response) {
+        // Logic to update an existing customer
     }
 
-    deleteCustumer(req: Request, res: Response) {
-        // Logic to delete a custumer
+    deleteCustomer(req: Request, res: Response) {
+        // Logic to delete a customer
     }
 
 
