@@ -1,12 +1,12 @@
 import express from 'express';
-import { custumerRouter } from './custumer/custumer.routes.js';
+import { customerRouter } from './customer/customer.routes.js';
 import { appointmentRouter } from './appointment/appointment.routes.js';
 
 const app = express();
 
 app.use(express.json())
 
-app.use('/api/custumers', custumerRouter);
+app.use('/api/customers', customerRouter);
 app.use('/api/appointments', appointmentRouter);
 
 app.listen(3000, () => {
