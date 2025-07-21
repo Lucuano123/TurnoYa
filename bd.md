@@ -1,4 +1,4 @@
--- Tabla Category
+-- Tabla categories
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE categories (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Customer
+-- Tabla customers
 CREATE TABLE customers (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
@@ -16,12 +16,11 @@ CREATE TABLE customers (
   password VARCHAR(255) NOT NULL,
   phone VARCHAR(20),
   birth_date DATE,
-  role VARCHAR(20) NOT NULL CHECK (role IN ('customer', 'professional', 'pending')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Service
+-- Tabla services
 CREATE TABLE services (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -29,15 +28,13 @@ CREATE TABLE services (
   duration INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   category_id INTEGER NOT NULL REFERENCES categories(id),
-  professional_id INTEGER NOT NULL REFERENCES customers(id),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Availability
+-- Tabla availabilities
 CREATE TABLE availabilities (
   id SERIAL PRIMARY KEY,
-  professional_id INTEGER NOT NULL REFERENCES customers(id),
   service_id INTEGER NOT NULL REFERENCES services(id),
   day_of_week INTEGER NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
   start_time TIME NOT NULL,
@@ -48,11 +45,10 @@ CREATE TABLE availabilities (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Booking
+-- Tabla bookings
 CREATE TABLE bookings (
   id SERIAL PRIMARY KEY,
   client_id INTEGER NOT NULL REFERENCES customers(id),
-  professional_id INTEGER NOT NULL REFERENCES customers(id),
   service_id INTEGER NOT NULL REFERENCES services(id),
   date DATE NOT NULL,
   start_time TIME NOT NULL,
@@ -62,7 +58,7 @@ CREATE TABLE bookings (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Payment
+-- Tabla payments
 CREATE TABLE payments (
   id SERIAL PRIMARY KEY,
   booking_id INTEGER NOT NULL UNIQUE REFERENCES bookings(id),
@@ -75,8 +71,8 @@ CREATE TABLE payments (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índices recomendados para optimizar consultas
+-- Índices para optimizar consultas
 CREATE INDEX idx_bookings_date ON bookings(date);
 CREATE INDEX idx_customers_email ON customers(email);
-CREATE INDEX idx_availabilities_professional_id ON availabilities(professional_id);
+CREATE INDEX idx_availabilities_service_id ON availabilities(service_id);
 CREATE INDEX idx_payments_booking_id ON payments(booking_id);
