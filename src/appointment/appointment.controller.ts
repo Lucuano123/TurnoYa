@@ -32,8 +32,8 @@ export class AppointmentController {
         const newAppointment = new Appointment(
             new Date(input.date),
             input.time,
-            input.custumer_name,
-            input.custumer_email,
+            input.customer_name,
+            input.customer_email,
             input.booked_service,
             input.status || 'scheduled' // Default status to 'scheduled' if not provided
         );

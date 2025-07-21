@@ -1,7 +1,7 @@
-CREATE TABLE IF NOT EXISTS custumers (
+CREATE TABLE IF NOT EXISTS customers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    custumerClass VARCHAR(50) NOT NULL,
+    customerClass VARCHAR(50) NOT NULL,
     items TEXT[] NOT NULL DEFAULT '{}',
     attack INTEGER NOT NULL DEFAULT 0,
     mana INTEGER NOT NULL DEFAULT 0,
@@ -19,7 +19,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_custumers_updated_at
-    BEFORE UPDATE ON custumers
+CREATE TRIGGER update_customers_updated_at
+    BEFORE UPDATE ON customers
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
