@@ -1,0 +1,1 @@
+// Validación de entrada (Joi/Zod)
