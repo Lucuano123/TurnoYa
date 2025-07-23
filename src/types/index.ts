@@ -1,0 +1,1 @@
+// Definiciones de tipos (ej., Request, Response)
