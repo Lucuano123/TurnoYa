@@ -1,5 +1,5 @@
 // Interfaz del repositorio
-import { Booking } from './bookings.entity';
+import { Booking } from './bookings.entity.js';
 
 export interface BookingsRepository {
   findAll(params: {
