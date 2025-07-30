@@ -1,7 +1,6 @@
-// Validación de JWT y roles
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { envConfig } from '../config/env.config';
+import { envConfig } from '../config/env.config.js';
 
 // Interfaz para el payload del JWT
 interface JwtPayload {
@@ -12,18 +11,19 @@ interface JwtPayload {
 
 // Middleware para verificar JWT, roles y estado
 export const authMiddleware = (roles: string[] = []) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
 
     // Verificar si el encabezado Authorization existe y es un Bearer token
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
+      res.status(401).json({
         error: {
           message: 'Token de autenticación no proporcionado',
           code: 'AUTH_TOKEN_MISSING',
           status: 401,
         },
       });
+      return;
     }
 
     const token = authHeader.split(' ')[1];
@@ -34,37 +34,40 @@ export const authMiddleware = (roles: string[] = []) => {
 
       // Verificar si el usuario tiene uno de los roles requeridos (si se especifican)
       if (roles.length > 0 && !roles.includes(decoded.role)) {
-        return res.status(403).json({
+        res.status(403).json({
           error: {
             message: 'Acceso denegado: rol insuficiente',
             code: 'AUTH_FORBIDDEN',
             status: 403,
           },
         });
+        return;
       }
 
       // Verificar si el usuario está aprobado
       if (decoded.status !== 'approved') {
-        return res.status(403).json({
+        res.status(403).json({
           error: {
             message: 'Acceso denegado: usuario no aprobado',
             code: 'AUTH_NOT_APPROVED',
             status: 403,
           },
         });
+        return;
       }
 
       // Adjuntar el payload decodificado a res.locals
-      res.locals.authUser = decoded; //Usamos req.locals para no añadir una propiedad al objeto req (req.user) lo que haría que tengamos que crear el archivo express.d.ts
+      res.locals.authUser = decoded;
       next();
     } catch (error) {
-      return res.status(401).json({
+      res.status(401).json({
         error: {
           message: 'Token inválido',
           code: 'AUTH_TOKEN_INVALID',
           status: 401,
         },
       });
+      return;
     }
   };
 };
