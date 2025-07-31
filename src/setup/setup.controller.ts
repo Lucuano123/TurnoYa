@@ -3,6 +3,7 @@ import { Client } from 'pg';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { databaseConfig } from '../config/database.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,13 +13,7 @@ export class SetupController {
   private client: Client;
 
   constructor() {
-    this.client = new Client({
-      user: process.env.DB_USER || 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      database: process.env.DB_NAME || 'turnero',
-      password: process.env.DB_PASSWORD || 'postgres',
-      port: Number(process.env.DB_PORT) || 5432,
-    });
+    this.client = new Client(databaseConfig);
   }
 
   async setupDatabase(req: Request, res: Response): Promise<void> {
@@ -26,19 +21,32 @@ export class SetupController {
       // Conectar al cliente PostgreSQL
       await this.client.connect();
 
-      // Leer y ejecutar bookings.sql
-      const bookingsSql = fs.readFileSync(
-        path.join(projectRoot, 'src/bookings/migrations/bookings.sql'),
+      // Ejecutar setup.sql para eliminar todas las tablas
+      const setupSql = fs.readFileSync(
+        path.join(projectRoot, 'src/setup/setup.sql'),
         'utf-8'
       );
-      await this.client.query(bookingsSql);
+      await this.client.query(setupSql);
+      console.log('Tablas eliminadas: setup.sql');
 
-      // Leer y ejecutar insert_test_data.sql
-      const testDataSql = fs.readFileSync(
-        path.join(projectRoot, 'src/bookings/migrations/insert_test_data.sql'),
-        'utf-8'
-      );
-      await this.client.query(testDataSql);
+      // Lista de migraciones en orden para crear tablas y datos
+      const migrations = [
+        'categories/migrations/categories.sql',
+        'customers/migrations/customers.sql',
+        'services/migrations/services.sql',
+        'availabilities/migrations/availabilities.sql',
+        'bookings/migrations/bookings.sql',
+        'payments/migrations/payments.sql',
+        'utils/migrations/notifications.sql',
+      ];
+
+      // Ejecutar cada migración
+      for (const migration of migrations) {
+        const filePath = path.join(projectRoot, 'src', migration);
+        const sql = fs.readFileSync(filePath, 'utf-8');
+        await this.client.query(sql);
+        console.log(`Migración ejecutada: ${migration}`);
+      }
 
       // Desconectar
       await this.client.end();
