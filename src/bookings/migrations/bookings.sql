@@ -1,24 +1,4 @@
--- migrations/bookings.sql
-CREATE TABLE customers (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  name VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  phone VARCHAR(20),
-  birth_date DATE,
-  role VARCHAR(20) NOT NULL DEFAULT 'client',
-  status VARCHAR(20) NOT NULL DEFAULT 'pending'
-);
-
-CREATE TABLE services (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  description TEXT,
-  duration INTEGER NOT NULL,
-  price DECIMAL(10,2) NOT NULL,
-  category_id INTEGER
-);
-
+-- Crear tabla bookings
 CREATE TABLE bookings (
   id SERIAL PRIMARY KEY,
   client_id INTEGER NOT NULL REFERENCES customers(id),
@@ -27,10 +7,21 @@ CREATE TABLE bookings (
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   status VARCHAR(20) NOT NULL CHECK (status IN ('confirmed', 'cancelled', 'completed', 'pending')),
-  treatment_id UUID UNIQUE,
+  treatment_id UUID UNIQUE DEFAULT gen_random_uuid(),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Eliminar índices si existen
+DROP INDEX IF EXISTS idx_bookings_date;
+DROP INDEX IF EXISTS idx_bookings_treatment_id;
+
+-- Crear índices
 CREATE INDEX idx_bookings_date ON bookings(date);
 CREATE INDEX idx_bookings_treatment_id ON bookings(treatment_id);
+
+-- Insertar datos de prueba con IDs explícitos
+INSERT INTO bookings (id, client_id, service_id, date, start_time, end_time, status, treatment_id) VALUES
+  (1, 1, 1, '2025-08-01', '09:00', '09:30', 'confirmed', gen_random_uuid()),
+  (2, 2, 2, '2025-08-01', '14:00', '14:45', 'pending', gen_random_uuid()),
+  (3, 1, 3, '2025-08-02', '10:00', '11:00', 'confirmed', gen_random_uuid());
