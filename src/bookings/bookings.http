@@ -1,4 +1,5 @@
 ### Obtener las reservas diarias de un profesional (HU10)
-GET http://localhost:3000/api/bookings/professional/bookings?date=2025-07-28
+GET http://localhost:3000/api/bookings/professional/bookings?date=2025-08-02
+
 //Authorization: Bearer <your-jwt-token>
 

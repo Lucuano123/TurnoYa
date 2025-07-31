@@ -1,5 +1,5 @@
 import express from 'express';
-import { customerRouter } from './customers/customer.routes.js';
+import { customerRouter } from './customers/customers.routes.js';
 import { bookingsRouter } from './bookings/bookings.routes.js';
 import { setupRouter } from './setup/setup.routes.js';
 

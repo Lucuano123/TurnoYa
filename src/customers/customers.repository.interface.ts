@@ -1,4 +1,4 @@
-import { Customer } from "./customer.entity.js";
+import { Customer } from "./customers.entity.js";
 
 export interface CustomerRepository {
     findAll(): Promise<Customer[] | undefined>;

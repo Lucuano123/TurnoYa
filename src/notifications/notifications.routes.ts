@@ -1,0 +1,1 @@
+// Rutas para /notifications (ej., consultar historial)

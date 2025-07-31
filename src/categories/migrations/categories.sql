@@ -7,8 +7,10 @@ CREATE TABLE categories (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Limpiar las tablas y reiniciar las secuencias  
+TRUNCATE TABLE categories RESTART IDENTITY CASCADE;
 -- Insertar datos de prueba
 INSERT INTO categories (id, name, description) VALUES
-  (1, 'Peluquería', 'Servicios de cuidado capilar y estilismo'),
-  (2, 'Estética', 'Servicios de cuidado personal y belleza'),
-  (3, 'Nutrición', 'Servicios de planificación dietética');
+  (1, 'Categoría 1', 'Descripción de la categoría 1'),
+  (2, 'Categoría 2', 'Descripción de la categoría 2'),
+  (3, 'Categoría 3', 'Descripción de la categoría 3');

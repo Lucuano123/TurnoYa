@@ -23,7 +23,7 @@ export class SetupController {
 
       // Ejecutar setup.sql para eliminar todas las tablas
       const setupSql = fs.readFileSync(
-        path.join(projectRoot, 'src/setup/setup.sql'),
+        path.join(projectRoot, 'src/setup/migrations/setup.sql'),
         'utf-8'
       );
       await this.client.query(setupSql);
@@ -37,7 +37,8 @@ export class SetupController {
         'availabilities/migrations/availabilities.sql',
         'bookings/migrations/bookings.sql',
         'payments/migrations/payments.sql',
-        'utils/migrations/notifications.sql',
+        'notifications/migrations/notifications.sql',
+        'settings/migrations/settings.sql',
       ];
 
       // Ejecutar cada migración

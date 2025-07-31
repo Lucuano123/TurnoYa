@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Customer } from './customer.entity.js';
-import { CustomerMongoRepository } from './customer.mongodb.repository.js';
-import { CustomerPostgresRepository } from './customer.postgres.repository.js';
+import { Customer } from './customers.entity.js';
+import { CustomerMongoRepository } from './customers.mongodb.repository.js';
+import { CustomerPostgresRepository } from './customers.postgres.repository.js';
 
 
 const customerRepository = new CustomerMongoRepository();
