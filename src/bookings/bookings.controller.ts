@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { BookingsPostgresRepository } from './bookings.postgres.repository.js';
-import { Booking } from './bookings.entity';
+import { Booking } from './bookings.entity.js';
+import { BookingsRepository } from './bookings.repository.interface.js';
 
 export class BookingsController {
   private readonly bookingsRepository: BookingsPostgresRepository;
@@ -8,7 +9,7 @@ export class BookingsController {
   constructor() {
     this.bookingsRepository = new BookingsPostgresRepository();
   }
-
+  
   // HU10: Get professional's daily bookings
   getProfessionalBookings: RequestHandler = async (
     req: Request,
@@ -16,7 +17,7 @@ export class BookingsController {
     next: NextFunction
   ): Promise<void> => {
     const date = req.query.date as string || new Date().toISOString().split('T')[0];
-
+    
     try {
       // Validar formato de fecha (ISO 8601: YYYY-MM-DD)
       if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -29,10 +30,10 @@ export class BookingsController {
         });
         return;
       }
-
+      
       // Consultar reservas desde el repositorio
-      const bookings = await this.bookingsRepository.findByDate(new Date(date));
-
+      const bookings = await this.bookingsRepository;
+      
       // Devolver array vacío si no hay reservas
       res.status(200).json({ data: bookings || [] });
     } catch (error) {
@@ -46,4 +47,27 @@ export class BookingsController {
       return;
     }
   };
+
+    //HU03
+    async addBookings(req: Request, res: Response) {
+      
+        const input = req.body;
+        const newBooking = new Booking(
+            input.id,
+            input.clientId,
+            input.serviceId,
+            new Date(input.date),
+            input.startTime,
+            input.endTime,
+            input.status,
+            input.treatmentId || crypto.randomUUID(),
+            input.createdAt || new Date(),
+            input.updatedAt || new Date()
+        );
+        
+        await this.bookingsRepository.add(newBooking);
+        res.status(201).json({ data: newBooking });
+    
+    }
+
 }

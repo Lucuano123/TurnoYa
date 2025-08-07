@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { Customer } from './customers.entity.js';
-import { CustomerMongoRepository } from './customers.mongodb.repository.js';
+/*import { CustomerMongoRepository } from './customers.mongodb.repository.js';
 import { CustomerPostgresRepository } from './customers.postgres.repository.js';
-
 
 const customerRepository = new CustomerMongoRepository();
 //const customerRepository = new CustomerPostgresRepository();
@@ -31,10 +30,17 @@ export class CustomerController {
 
         const input = req.body;
         const newCustomer = new Customer(
-            input.name,
-            input.lastname,
-            input.cellphone,
-            input.email
+            input.id,
+            input.email,
+            input.first_name,
+            input.last_name,
+            input.password,
+            input.phone,
+            input.birth_date,
+            input.status,
+            input.role,
+            input.created_at,
+            input.updated_at
         );
 
         await customerRepository.add(newCustomer);
@@ -42,7 +48,7 @@ export class CustomerController {
         res.status(201).json({ data: newCustomer });
 
     }
-
+ 
     updateCustomer(req: Request, res: Response) {
         // Logic to update an existing customer
     }
@@ -51,7 +57,4 @@ export class CustomerController {
         // Logic to delete a customer
     }
 
-
-
-
-}
+}*/

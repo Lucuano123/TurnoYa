@@ -1,4 +1,4 @@
-import { Router } from "express";
+/*import { Router } from "express";
 import { CustomerController } from './customers.controller.js';
 
 export const customerRouter = Router();
@@ -30,5 +30,9 @@ function sanitizeCustomerInput(req:any, res:any, next:any) {
   })
 
   next()
-}
-
+}*/
+// customers.routes.ts
+import express from 'express';
+const router = express.Router();
+// tus rutas aquí
+export default router;

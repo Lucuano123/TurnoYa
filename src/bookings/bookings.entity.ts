@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 
 export class Booking {
   constructor(
-    public id: number | undefined,
+    public id: number,
     public clientId: number,
     public serviceId: number,
     public date: Date,

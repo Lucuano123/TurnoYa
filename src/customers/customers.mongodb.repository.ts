@@ -1,4 +1,4 @@
-import { CustomerRepository } from "./customers.repository.interface.js";
+/*import { CustomerRepository } from "./customers.repository.interface.js";
 import { Customer } from "./customers.entity.js";
 import { MongoClient, ObjectId } from "mongodb";
 
@@ -46,4 +46,4 @@ export class CustomerMongoRepository implements CustomerRepository {
         const objectId = new ObjectId(id)
         return (await customers.findOneAndDelete({ _id: objectId })) || undefined
     }
-}
+}*/

@@ -1,4 +1,4 @@
-import { CustomerRepository } from "./customers.repository.interface.js";
+/*import { CustomerRepository } from "./customers.repository.interface.js";
 import { Customer } from "./customers.entity.js";
 import { Client } from "pg";
 
@@ -26,31 +26,6 @@ export class CustomerPostgresRepository implements CustomerRepository {
         return res.rows[0] as Customer || undefined;
     }
 
-    async add(customer: Customer): Promise<Customer | undefined> {
-        try {
-            const res = await client.query(
-                'INSERT INTO customers (name, lastname, cellphone, email) VALUES ($1, $2, $3, $4) RETURNING *',
-                [customer.name, customer.lastname, customer.cellphone, customer.email]
-            );
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error adding customer:', error);
-            return undefined;
-        }
-    }
-
-    async update(id: string, customer: Customer): Promise<Customer | undefined> {
-        try {
-            const res = await client.query(
-                'UPDATE customers SET name = $1, lastname = $2, cellphone = $3, email = $4 RETURNING *',
-                [customer.name, customer.lastname, customer.cellphone, customer.email]
-            );
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error updating customer:', error);
-            return undefined;
-        }
-    }
 
     async partialUpdate(id: string, updates: Partial<Customer>): Promise<Customer | undefined> {
         try {
@@ -76,4 +51,4 @@ export class CustomerPostgresRepository implements CustomerRepository {
             return undefined;
         }
     }
-}
+}*/
