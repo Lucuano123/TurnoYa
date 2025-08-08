@@ -9,7 +9,7 @@ export class BookingsController {
     this.bookingsRepository = new BookingsPostgresRepository();
   }
 
-  // HU10: Get professional's daily bookings
+  // HU10: Obtener reservas siendo profesional
   getProfessionalBookings: RequestHandler = async (
     req: Request,
     res: Response,
