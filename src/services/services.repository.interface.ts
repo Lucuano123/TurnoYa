@@ -1,12 +1,9 @@
 // Interfaz del repositorio
-/*
+
+// src/services/services.repository.interface.ts
+
 import { Services } from './services.entity';
 
 export interface ServicesRepository {
-    findAll(): Promise<Services[]>;
-    findById(id: number): Promise<Services | null>;
-    create(service: Services): Promise<Services>;
-    update(id: number, service: Partial<Services>): Promise<Services | null>;
-    delete(id: number): Promise<void>;
+  create(service: Omit<Services, 'id'>): Promise<Services>;
 }
-*/

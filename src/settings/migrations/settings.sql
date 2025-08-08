@@ -12,9 +12,9 @@ TRUNCATE TABLE settings RESTART IDENTITY CASCADE;
 
 -- Insertar datos de configuración inicial
 INSERT INTO settings (key, value) VALUES
-    ('site_name', 'TurnoYa'),
-    ('site_url', 'https://turnoya.com'),
-    ('contact_email', 'turnoya@turnoya.com');
+    ('site_name', 'turnero'),
+    ('site_url', 'https://turnero.com'),
+    ('contact_email', 'turnero@turnero.com');
 
 
 

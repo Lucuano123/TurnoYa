@@ -1,64 +1,68 @@
-
-import { pool } from '../config/database.config.js';
 import { Booking } from './bookings.entity.js';
 import { BookingsRepository } from './bookings.repository.interface.js';
+import { pool } from '../config/database.config.js';
 
 export class BookingsPostgresRepository implements BookingsRepository {
-  findAll(params: { clientId: number; status?: string; dateFrom?: Date; dateTo?: Date; }): Promise<Booking[] | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  findOne(id: number): Promise<Booking | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  add(booking: Booking): Promise<Booking | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  update(id: number, booking: Booking): Promise<Booking | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  delete(id: number): Promise<Booking | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  checkAvailability(serviceId: number, date: Date, startTime: string, excludeBookingId?: number): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
 
-  async findByDate(date: Date): Promise<Booking[] | undefined> {
+  async add(booking: Booking): Promise<Booking> {
     try {
-      const query = `
-        SELECT 
-          id,
-          client_id AS clientId,
-          service_id AS serviceId,
-          date,
-          start_time AS startTime,
-          end_time AS endTime,
-          status,
-          treatment_id AS treatmentId,
-          created_at AS createdAt,
-          updated_at AS updatedAt
-        FROM bookings
-        WHERE date = $1
-        ORDER BY start_time
-      `;
-      const res = await pool.query(query, [date]);
-      return res.rows.map(
-        (row) =>
-          new Booking(
-            row.id,
-            row.clientid,
-            row.serviceid,
-            new Date(row.date),
-            row.starttime,
-            row.endtime,
-            row.status,
-            row.treatmentid,
-            new Date(row.createdat),
-            new Date(row.updatedat),
-          ),
+      const res = await pool.query(
+        `INSERT INTO bookings ("clientId", "serviceId", "date", "startTime", "endTime", "status", "treatment_id", "created_at", "updated_at")
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         RETURNING *`,
+        [
+          booking.clientId,
+          booking.serviceId,
+          booking.date.toISOString().split('T')[0], // Formato YYYY-MM-DD
+          booking.startTime,
+          booking.endTime,
+          booking.status,
+          booking.treatment_id,
+          booking.created_at,
+          booking.updated_at
+        ]
+      );
+      
+      const newBooking = res.rows[0];
+      return new Booking(
+        newBooking.id,
+        newBooking.clientId,
+        newBooking.serviceId,
+        newBooking.date,
+        newBooking.startTime,
+        newBooking.endTime,
+        newBooking.status,
+        newBooking.treatment_id,
+        newBooking.created_at,
+        newBooking.updated_at
       );
     } catch (error) {
-      console.error('Error finding bookings by date:', error);
+      console.error('Error adding booking:', error);
+      throw error;
+    }
+  }
+
+// Método faltante para obtener las reservas del profesional
+  async getProfessionalBookings(date: string): Promise<Booking[]> {
+    try {
+      const res = await pool.query(
+        `SELECT * FROM bookings WHERE date = $1`,
+        [date]
+      );
+      return res.rows.map(row => new Booking(
+        row.id,
+        row.clientId,
+        row.serviceId,
+        row.date,
+        row.startTime,
+        row.endTime,
+        row.status,
+        row.treatment_id,
+        row.created_at,
+        row.updated_at
+      ));
+    } catch (error) {
+      console.error('Error getting professional bookings:', error);
       throw error;
     }
   }

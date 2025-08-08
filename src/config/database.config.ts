@@ -1,5 +1,7 @@
-import { envConfig } from './env.config.js';
+// src/config/database.config.ts
 import { Pool } from 'pg';
+import { envConfig } from './env.config.js';
+//import { Pool } from 'pg';
 
 export const databaseConfig = {
   user: envConfig.DB_USER,

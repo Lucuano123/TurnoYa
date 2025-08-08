@@ -1,15 +1,11 @@
 // Controlador para catálogo y reservas
-/*
+
 import { Request, Response } from 'express';
-import { ServicePostgresRepository } from './services.postgres.repository.js';
-import { query } from '../config/database.config.js';
-import { Services } from './services.entity.js';  
+import { ServicesPostgresRepository } from './services.postgres.repository.js';
 
-export class ServiceController {
-  constructor(private repo: ServicePostgresRepository) {}
+export class ServicesController {
+  static getAll(arg0: string, getAll: any) {
+      throw new Error('Method not implemented.');
+  }
 
-  getAll = async (_: Request, res: Response) => {
-    const services = await this.repo.getAll();
-    res.json(services);
-  };
-}*/
+}

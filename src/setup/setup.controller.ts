@@ -7,7 +7,7 @@ import { databaseConfig } from '../config/database.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '../../'); // Apunta a la raíz del proyecto (TurnoYa)
+const projectRoot = path.resolve(__dirname, '../../'); // Apunta a la raíz del proyecto (turnero)
 
 export class SetupController {
   private client: Client;

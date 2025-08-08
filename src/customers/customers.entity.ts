@@ -3,6 +3,7 @@ export interface Customer {
   email: string;
   first_name: string;
   last_name: string;
+  password: string,
   phone?: string;
   birth_date?: string;
   status: 'pending' | 'approved' | 'rejected';

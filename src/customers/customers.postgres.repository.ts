@@ -52,19 +52,4 @@ export class CustomersPostgresRepository {
     }
   }
 
-
-  /*  async findPendingUsers(): Promise<Customer[]> {
-      try {
-        // 1. Prueba con todos los usuarios
-        console.log('[Repository] Prueba 1: Obtener todos los usuarios');
-        const allUsers = await pool.query('SELECT * FROM customers LIMIT 5');
-        console.log('[Repository] Todos los usuarios:', allUsers.rows);
-  
-  
-        return allUsers.rows;
-      } catch (error) {
-        console.error('[Repository] Error:', error);
-        throw error;
-      }
-    }*/
 }

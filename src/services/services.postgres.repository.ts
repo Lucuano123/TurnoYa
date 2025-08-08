@@ -1,18 +1,43 @@
-// Repositorio PostgreSQL
-/*
 import { Services } from './services.entity.js';
-import { Pool } from 'pg';
+import { query } from '../config/database.config';
+import { ServicesRepository } from "./services.repository.interface.js";
+import { Pool } from "pg";
 
-export class ServicePostgresRepository {
-  constructor(private pool: Pool) {}
+const dbClient = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'services',
+  password: 'postgres',
+  port: 5432,
+});
 
-  async getAll(): Promise<Services[]> {
-    const res = await this.pool.query('SELECT * FROM services');
-    return res.rows;
+export class ServicesPostgresRepository implements ServicesRepository {
+  constructor() {
+    // Si usás Pool, no hace falta `connect()`, solo si querés probar la conexión manualmente
+    // dbClient.connect();
   }
 
-  async getById(id: string): Promise<Services | null> {
-    const res = await this.pool.query('SELECT * FROM services WHERE id = $1', [id]);
-    return res.rows[0] || null;
+  async create(service: Services): Promise<Services> {
+  try {
+    const res = await dbClient.query(
+      `INSERT INTO service (name, descipcion, duracion, price, category_id, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        service.name,
+        service.descipcion,
+        service.duracion,
+        service.price,
+        service.category_id,
+        service.image_url
+      ]
+    );
+    return res.rows[0]; // ✅ solo retornamos si todo fue bien
+  } catch (error) {
+    console.error('Error adding service:', error);
+    throw error; // ❗ lanzamos el error o manejalo como prefieras
   }
-}*/
+}
+
+
+}
