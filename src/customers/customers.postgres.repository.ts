@@ -1,79 +1,66 @@
-import { CustomerRepository } from "./customers.repository.interface.js";
-import { Customer } from "./customers.entity.js";
-import { Client } from "pg";
+import { pool } from '../config/database.config.js';
+import { Customer } from './customers.entity.js';
 
-const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'customers',
-    password: 'postgres',
-    port: 5432
-});
 
-export class CustomerPostgresRepository implements CustomerRepository {
-
-    constructor() {
-        client.connect();
+export class CustomersPostgresRepository {
+  async findById(id: number): Promise<Customer | null> {
+    const query = 'SELECT * FROM customers WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    return rows[0] || null;
+  }
+  async findAll(): Promise<Customer[]> {
+    try {
+      const query = 'SELECT * FROM customers ORDER BY id';
+      const { rows } = await pool.query(query);
+      return rows;
+    } catch (error) {
+      console.error('[CustomersPostgresRepository] Error getting all customers:', error);
+      throw {
+        message: 'Error al obtener todos los clientes',
+        code: 'DB_ERROR',
+        status: 500,
+      };
     }
+  }
+  async updateStatus(id: number, status: 'approved' | 'rejected'): Promise<Customer> {
+    const query = `
+      UPDATE customers 
+      SET status = $1, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $2 
+      RETURNING *
+    `;
+    const { rows } = await pool.query(query, [status, id]);
+    return rows[0];
+  }
 
-    async findAll(): Promise<Customer[] | undefined> {
-        const res = await client.query('SELECT * FROM customers');
-        return res.rows as Customer[] || undefined;
-    }
-
-    async findOne(id: string): Promise<Customer | undefined> {
-        const res = await client.query('SELECT * FROM customers WHERE id = $1', [id]);
-        return res.rows[0] as Customer || undefined;
-    }
-
-    async add(customer: Customer): Promise<Customer | undefined> {
-        try {
-            const res = await client.query(
-                'INSERT INTO customers (name, lastname, cellphone, email) VALUES ($1, $2, $3, $4) RETURNING *',
-                [customer.name, customer.lastname, customer.cellphone, customer.email]
-            );
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error adding customer:', error);
-            return undefined;
+  /*  async findPendingUsers(): Promise<Customer[]> {
+      try {
+        const query = 'SELECT * FROM customers WHERE status = $1';
+        const { rows } = await pool.query(query, ['pending']);
+        return rows;
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('[CustomersPostgresRepository] Error getting pending users:', error.message, error.stack);
+          throw { message: 'Error al obtener usuarios pendientes aca estoy en repository', code: 'DB_ERROR', status: 500, cause: error.message };
+        } else {
+          console.error('[CustomersPostgresRepository] Error getting pending users:', error);
+          throw { message: 'Error al obtener usuarios pendientes - aca tambien', code: 'DB_ERROR', status: 500, cause: String(error) };
         }
-    }
+      }
+    }*/
 
-    async update(id: string, customer: Customer): Promise<Customer | undefined> {
-        try {
-            const res = await client.query(
-                'UPDATE customers SET name = $1, lastname = $2, cellphone = $3, email = $4 RETURNING *',
-                [customer.name, customer.lastname, customer.cellphone, customer.email]
-            );
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error updating customer:', error);
-            return undefined;
-        }
-    }
+  async findPendingUsers(): Promise<Customer[]> {
+    try {
+      // 1. Prueba con todos los usuarios
+      console.log('[Repository] Prueba 1: Obtener todos los usuarios');
+      const allUsers = await pool.query('SELECT * FROM customers LIMIT 5');
+      console.log('[Repository] Todos los usuarios:', allUsers.rows);
 
-    async partialUpdate(id: string, updates: Partial<Customer>): Promise<Customer | undefined> {
-        try {
-            const keys = Object.keys(updates);
-            const values = Object.values(updates);
-            const setClause = keys.map((key, i) => `${key} = $${i + 1}`).join(', ');
-            const query = `UPDATE customers SET ${setClause} WHERE id = $${keys.length + 1} RETURNING *`;
-            
-            const res = await client.query(query, [...values, id]);
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error partially updating customer:', error);
-            return undefined;
-        }
-    }
 
-    async delete(id: string): Promise<Customer | undefined> {
-        try {
-            const res = await client.query('DELETE FROM customers WHERE id = $1 RETURNING *', [id]);
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error deleting customer:', error);
-            return undefined;
-        }
+      return allUsers.rows;
+    } catch (error) {
+      console.error('[Repository] Error:', error);
+      throw error;
     }
+  }
 }

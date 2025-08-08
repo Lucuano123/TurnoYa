@@ -1,57 +1,137 @@
 import { Request, Response } from 'express';
+import { CustomersService } from './customers.service.js';
+import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { Customer } from './customers.entity.js';
-import { CustomerMongoRepository } from './customers.mongodb.repository.js';
-import { CustomerPostgresRepository } from './customers.postgres.repository.js';
 
+export class CustomersController {
+  
+  private customersService: CustomersService;
 
-const customerRepository = new CustomerMongoRepository();
-//const customerRepository = new CustomerPostgresRepository();
+  constructor(customersService: CustomersService) {
+    this.customersService = customersService;
+    console.log('[CustomersController] Constructor - Servicio recibido:', !!customersService);
+  }
 
-export class CustomerController {
-
-    async findAllCustomers(req: Request, res: Response) {
-        const customers = await customerRepository.findAll();
-        res.json(customers);
-    }
-
-    async findCustomerById(req: Request, res: Response) {
-        const customerId = req.params.id;
-        const customer = await customerRepository.findOne(customerId);
-        if (!customer) {
-            res.status(404).json({
-                errorMessage: 'Customer not found',
-                errorCode: 'CHARACTER_NOT_FOUND'
-            });
-            return;
+  async getAllCustomers(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('[Controller] Iniciando getAllCustomers');
+      console.log('[Controller] customersService existe:', !!this.customersService);
+      
+      const customers = await this.customersService.getAllCustomers();
+      console.log('[Controller] Clientes obtenidos:', customers.length);
+      res.status(200).json(customers);
+    } catch (error) {
+      console.error('[Controller] Error:', error);
+      res.status(500).json({
+        error: {
+          message:  'Error al obtener todos los clientes',
+          code:  'SERVER_ERROR',
+          status:  500
         }
-        res.json({ data: customer });
+      });
     }
+  }
+  async validateUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      console.log('[Controller] Iniciando validateUser');
+      console.log('[Controller] Parámetros de la ruta:', req.params);
+      console.log('[Controller] Cuerpo de la petición:', req.body);
+      console.log('[Controller] Usuario autenticado:', req.customer);
+      
+      const { id } = req.params;
+      const { status } = req.body;
+      const professionalId = req.customer?.id; // ID del profesional autenticado
+      
+      console.log('[Controller] ID a validar:', id);
+      console.log('[Controller] Nuevo status:', status);
+      console.log('[Controller] ID profesional:', professionalId);
 
-    async addCustomer(req: Request, res: Response) {
-
-        const input = req.body;
-        const newCustomer = new Customer(
-            input.name,
-            input.lastname,
-            input.cellphone,
-            input.email
-        );
-
-        await customerRepository.add(newCustomer);
-
-        res.status(201).json({ data: newCustomer });
-
+      if (professionalId === undefined) {
+        console.log('[Controller] Error: ID profesional no definido');
+        res.status(400).json({
+          error: {
+            message: 'ID del profesional no definido',
+            code: 'PROFESSIONAL_ID_UNDEFINED',
+            status: 400
+          }
+        });
+        return;
+      }
+      
+      if (!['approved', 'rejected'].includes(status)) {
+        console.log('[Controller] Status inválido:', status);
+        res.status(400).json({
+          error: {
+            message: 'Estado inválido. Debe ser "approved" o "rejected"',
+            code: 'INVALID_STATUS',
+            status: 400
+          }
+        });
+        return;
+      }
+      
+      console.log('[Controller] Llamando al servicio para validar usuario');
+      const user = await this.customersService.validateUser(
+        parseInt(id), 
+        status, 
+        professionalId
+      );
+      
+      console.log('[Controller] Usuario validado exitosamente:', user);
+      
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        status: user.status,
+        message: 'Estado de usuario actualizado'
+      });
+    } catch (error) {
+      console.error('[Controller] Error en validateUser:', error);
+      const err = error as { message?: string };
+      
+      if (err.message === 'USER_NOT_FOUND') {
+        console.log('[Controller] Error: Usuario no encontrado');
+        res.status(404).json({
+          error: {
+            message: 'Usuario no encontrado',
+            code: 'USER_NOT_FOUND',
+            status: 404
+          }
+        });
+      } else if (err.message === 'USER_NOT_PENDING') {
+        console.log('[Controller] Error: Usuario no está pendiente');
+        res.status(400).json({
+          error: {
+            message: 'El usuario no está en estado pendiente',
+            code: 'USER_NOT_PENDING',
+            status: 400
+          }
+        });
+      } else {
+        console.error('[Controller] Error no manejado:', error);
+        res.status(500).json({
+          error: {
+            message: 'Error del servidor',
+            code: 'SERVER_ERROR',
+            status: 500
+          }
+        });
+      }
     }
+  }
 
-    updateCustomer(req: Request, res: Response) {
-        // Logic to update an existing customer
+  async getPendingUsers(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const pendingUsers = await this.customersService.getPendingUsers();
+      res.status(200).json(pendingUsers);
+    } catch (error) {
+      res.status(500).json({
+        error: {
+          message: 'Error al obtener usuarios pendientes - aca estoy en el controlador',
+          code: 'SERVER_ERROR',
+          status: 500
+        }
+      });
     }
-
-    deleteCustomer(req: Request, res: Response) {
-        // Logic to delete a customer
-    }
-
-
-
-
+  }
 }

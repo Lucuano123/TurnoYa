@@ -1,73 +1,52 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { envConfig } from '../config/env.config.js';
+import { pool } from '../config/database.config.js';
 
-// Interfaz para el payload del JWT
-interface JwtPayload {
+interface Customer {
   id: number;
+  email: string; 
   role: string;
   status: string;
 }
 
-// Middleware para verificar JWT, roles y estado
-export const authMiddleware = (roles: string[] = []) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const authHeader = req.headers.authorization;
+export interface AuthenticatedRequest extends Request {
+  customer?: Customer;
+}
 
-    // Verificar si el encabezado Authorization existe y es un Bearer token
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({
-        error: {
-          message: 'Token de autenticación no proporcionado',
-          code: 'AUTH_TOKEN_MISSING',
-          status: 401,
-        },
-      });
+export const authMiddleware = (roles: string[] = []) => {
+  return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    const customerId = req.headers['x-user-id'] as string;
+    
+    if (!customerId) {
+      res.status(401).json({ error: { message: 'ID de usuario no proporcionado', code: 'USER_ID_MISSING', status: 401 } });
       return;
     }
 
-    const token = authHeader.split(' ')[1];
-
     try {
-      // Verificar el token con la clave secreta
-      const decoded = jwt.verify(token, envConfig.JWT_SECRET) as JwtPayload;
-
-      // Verificar si el usuario tiene uno de los roles requeridos (si se especifican)
-      if (roles.length > 0 && !roles.includes(decoded.role)) {
-        res.status(403).json({
-          error: {
-            message: 'Acceso denegado: rol insuficiente',
-            code: 'AUTH_FORBIDDEN',
-            status: 403,
-          },
-        });
+      const query = 'SELECT id, email, role, status FROM customers WHERE id = $1';
+      const { rows } = await pool.query(query, [parseInt(customerId)]);
+      
+      if (rows.length === 0) {
+        res.status(401).json({ error: { message: 'Usuario no encontrado', code: 'USER_NOT_FOUND', status: 401 } });
         return;
       }
 
-      // Verificar si el usuario está aprobado
-      if (decoded.status !== 'approved') {
-        res.status(403).json({
-          error: {
-            message: 'Acceso denegado: usuario no aprobado',
-            code: 'AUTH_NOT_APPROVED',
-            status: 403,
-          },
-        });
+      const customer = rows[0] as Customer;
+
+      if (customer.status !== 'approved') {
+        res.status(403).json({ error: { message: 'Acceso denegado: usuario no aprobado', code: 'AUTH_NOT_APPROVED', status: 403 } });
         return;
       }
 
-      // Adjuntar el payload decodificado a res.locals
-      res.locals.authUser = decoded;
+      if (roles.length > 0 && !roles.includes(customer.role)) {
+        res.status(403).json({ error: { message: 'Acceso denegado: rol insuficiente', code: 'AUTH_FORBIDDEN', status: 403 } });
+        return;
+      }
+
+      req.customer = customer; 
       next();
     } catch (error) {
-      res.status(401).json({
-        error: {
-          message: 'Token inválido',
-          code: 'AUTH_TOKEN_INVALID',
-          status: 401,
-        },
-      });
-      return;
+      console.error('[AuthMiddleware] Error:', error instanceof Error ? error.message : String(error), error instanceof Error ? error.stack : '');
+      res.status(500).json({ error: { message: 'Error del servidor', code: 'SERVER_ERROR', status: 500, cause: error instanceof Error ? error.message : String(error) } });
     }
   };
 };

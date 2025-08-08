@@ -1,34 +1,32 @@
-import { Router } from "express";
-import { CustomerController } from './customers.controller.js';
+import { Router } from 'express';
+import { CustomersController } from './customers.controller.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { CustomersService } from './customers.service.js';
+import { CustomersPostgresRepository } from './customers.postgres.repository.js';
 
 export const customerRouter = Router();
-const customerController = new CustomerController();
+const customersRepository = new CustomersPostgresRepository();
+const customersService = new CustomersService(customersRepository);
+const customersController = new CustomersController(customersService);
 
-customerRouter.get('/', customerController.findAllCustomers);
-customerRouter.get('/:id', customerController.findCustomerById);
-customerRouter.post('/', sanitizeCustomerInput, customerController.addCustomer);
-customerRouter.put('/:id', sanitizeCustomerInput, customerController.updateCustomer);
-customerRouter.delete('/:id', customerController.deleteCustomer);  
+// Rutas enlazadas con bind para que no se pierda el contexto de .this
+customerRouter.put(
+  '/:id/validate',
+  authMiddleware(['professional']),
+  customersController.validateUser.bind(customersController)
+);
 
-function sanitizeCustomerInput(req:any, res:any, next:any) {
+customerRouter.get(
+  '/pending',
+  authMiddleware(['professional']),
+  customersController.getPendingUsers.bind(customersController)
+);
 
-  req.body.sanitizedInput = {
-    name: req.body.name,
-    customerClass: req.body.customerClass,
-    level: req.body.level,
-    hp: req.body.hp,
-    mana: req.body.mana,
-    attack: req.body.attack,
-    items: req.body.items,
-  }
-  //more checks here
+// Nueva ruta (enlazada con bind)
+customerRouter.get(
+  '/all',
+  authMiddleware(['professional']),
+  customersController.getAllCustomers.bind(customersController)
+);
 
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
-    }
-  })
-
-  next()
-}
-
+export default customerRouter;
