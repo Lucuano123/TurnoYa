@@ -32,35 +32,39 @@ export class CustomersPostgresRepository {
     const { rows } = await pool.query(query, [status, id]);
     return rows[0];
   }
+  async findPendingUsers(): Promise<Customer[]> {
+    try {
+      const query = `
+      SELECT * FROM customers
+      WHERE status = 'pending'
+      ORDER BY id
+    `;
+      const { rows } = await pool.query(query);
+      console.log('[Repository] Usuarios pendientes encontrados:', rows.length);
+      return rows;
+    } catch (error) {
+      console.error('[Repository] Error en findPendingUsers:', error);
+      throw {
+        message: 'Error al obtener usuarios pendientes',
+        code: 'DB_ERROR',
+        status: 500,
+      };
+    }
+  }
+
 
   /*  async findPendingUsers(): Promise<Customer[]> {
       try {
-        const query = 'SELECT * FROM customers WHERE status = $1';
-        const { rows } = await pool.query(query, ['pending']);
-        return rows;
+        // 1. Prueba con todos los usuarios
+        console.log('[Repository] Prueba 1: Obtener todos los usuarios');
+        const allUsers = await pool.query('SELECT * FROM customers LIMIT 5');
+        console.log('[Repository] Todos los usuarios:', allUsers.rows);
+  
+  
+        return allUsers.rows;
       } catch (error) {
-        if (error instanceof Error) {
-          console.error('[CustomersPostgresRepository] Error getting pending users:', error.message, error.stack);
-          throw { message: 'Error al obtener usuarios pendientes aca estoy en repository', code: 'DB_ERROR', status: 500, cause: error.message };
-        } else {
-          console.error('[CustomersPostgresRepository] Error getting pending users:', error);
-          throw { message: 'Error al obtener usuarios pendientes - aca tambien', code: 'DB_ERROR', status: 500, cause: String(error) };
-        }
+        console.error('[Repository] Error:', error);
+        throw error;
       }
     }*/
-
-  async findPendingUsers(): Promise<Customer[]> {
-    try {
-      // 1. Prueba con todos los usuarios
-      console.log('[Repository] Prueba 1: Obtener todos los usuarios');
-      const allUsers = await pool.query('SELECT * FROM customers LIMIT 5');
-      console.log('[Repository] Todos los usuarios:', allUsers.rows);
-
-
-      return allUsers.rows;
-    } catch (error) {
-      console.error('[Repository] Error:', error);
-      throw error;
-    }
-  }
 }

@@ -31,6 +31,7 @@ export class CustomersController {
       });
     }
   }
+
   async validateUser(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       console.log('[Controller] Iniciando validateUser');
@@ -121,17 +122,25 @@ export class CustomersController {
   }
 
   async getPendingUsers(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
-      const pendingUsers = await this.customersService.getPendingUsers();
-      res.status(200).json(pendingUsers);
-    } catch (error) {
-      res.status(500).json({
-        error: {
-          message: 'Error al obtener usuarios pendientes - aca estoy en el controlador',
-          code: 'SERVER_ERROR',
-          status: 500
-        }
-      });
-    }
+  try {
+    console.log('[Controller] Iniciando getPendingUsers');
+    console.log('[Controller] customersService existe:', !!this.customersService);
+
+    const pendingUsers = await this.customersService.getPendingUsers();
+    
+    console.log('[Controller] Usuarios pendientes obtenidos:', pendingUsers.length);
+
+    res.status(200).json(pendingUsers);
+  } catch (error) {
+    console.error('[Controller] Error en getPendingUsers:', error);
+    res.status(500).json({
+      error: {
+        message: 'Error al obtener usuarios pendientes',
+        code: 'SERVER_ERROR',
+        status: 500
+      }
+    });
   }
+}
+
 }
