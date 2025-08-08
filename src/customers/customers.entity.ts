@@ -1,18 +1,13 @@
-export class Customer {
-
-    constructor(
-        public id: number,
-        public email: string,
-        public first_name: string,
-        public last_name: string,
-        private password: string,
-        public phone: number,
-        public birth_date: Date,
-        public status: 'pending' | 'approved' | 'rejected',
-        public role: 'customer' | 'professional',
-        public created_at: Date,
-        public updated_at: Date,
-    ) { }
-
+export interface Customer {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  password: string,
+  phone?: string;
+  birth_date?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  role: 'customer' | 'professional';
+  created_at: string;
+  updated_at: string;
 }
-

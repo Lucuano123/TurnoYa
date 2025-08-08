@@ -1,54 +1,55 @@
-/*import { CustomerRepository } from "./customers.repository.interface.js";
-import { Customer } from "./customers.entity.js";
-import { Client } from "pg";
+import { pool } from '../config/database.config.js';
+import { Customer } from './customers.entity.js';
 
-const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'customers',
-    password: 'postgres',
-    port: 5432
-});
 
-export class CustomerPostgresRepository implements CustomerRepository {
-
-    constructor() {
-        client.connect();
+export class CustomersPostgresRepository {
+  async findById(id: number): Promise<Customer | null> {
+    const query = 'SELECT * FROM customers WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    return rows[0] || null;
+  }
+  async findAll(): Promise<Customer[]> {
+    try {
+      const query = 'SELECT * FROM customers ORDER BY id';
+      const { rows } = await pool.query(query);
+      return rows;
+    } catch (error) {
+      console.error('[CustomersPostgresRepository] Error getting all customers:', error);
+      throw {
+        message: 'Error al obtener todos los clientes',
+        code: 'DB_ERROR',
+        status: 500,
+      };
     }
-
-    async findAll(): Promise<Customer[] | undefined> {
-        const res = await client.query('SELECT * FROM customers');
-        return res.rows as Customer[] || undefined;
+  }
+  async updateStatus(id: number, status: 'approved' | 'rejected'): Promise<Customer> {
+    const query = `
+      UPDATE customers 
+      SET status = $1, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $2 
+      RETURNING *
+    `;
+    const { rows } = await pool.query(query, [status, id]);
+    return rows[0];
+  }
+  async findPendingUsers(): Promise<Customer[]> {
+    try {
+      const query = `
+      SELECT * FROM customers
+      WHERE status = 'pending'
+      ORDER BY id
+    `;
+      const { rows } = await pool.query(query);
+      console.log('[Repository] Usuarios pendientes encontrados:', rows.length);
+      return rows;
+    } catch (error) {
+      console.error('[Repository] Error en findPendingUsers:', error);
+      throw {
+        message: 'Error al obtener usuarios pendientes',
+        code: 'DB_ERROR',
+        status: 500,
+      };
     }
+  }
 
-    async findOne(id: string): Promise<Customer | undefined> {
-        const res = await client.query('SELECT * FROM customers WHERE id = $1', [id]);
-        return res.rows[0] as Customer || undefined;
-    }
-
-
-    async partialUpdate(id: string, updates: Partial<Customer>): Promise<Customer | undefined> {
-        try {
-            const keys = Object.keys(updates);
-            const values = Object.values(updates);
-            const setClause = keys.map((key, i) => `${key} = $${i + 1}`).join(', ');
-            const query = `UPDATE customers SET ${setClause} WHERE id = $${keys.length + 1} RETURNING *`;
-            
-            const res = await client.query(query, [...values, id]);
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error partially updating customer:', error);
-            return undefined;
-        }
-    }
-
-    async delete(id: string): Promise<Customer | undefined> {
-        try {
-            const res = await client.query('DELETE FROM customers WHERE id = $1 RETURNING *', [id]);
-            return res.rows[0];
-        } catch (error) {
-            console.error('Error deleting customer:', error);
-            return undefined;
-        }
-    }
-}*/
+}

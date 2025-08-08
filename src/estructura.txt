@@ -1,6 +1,8 @@
 turnero/
 ├─ src/
 │  ├─ auth/
+│  │  ├─ migrations/
+│  │  │  └─ auth.sql
 │  │  ├─ auth.controller.ts
 │  │  ├─ auth.routes.ts
 │  │  ├─ auth.service.ts
@@ -26,25 +28,38 @@ turnero/
 │  ├─ categories/
 │  │  ├─ migrations/
 │  │  │  └─ categories.sql
-│  │  └─ categories.entity.ts
+│  │  ├─ categories.controller.ts
+│  │  ├─ categories.entity.ts
+│  │  ├─ categories.postgres.repository.ts
+│  │  ├─ categories.repository.interface.ts
+│  │  └─ categories.routes.ts
 │  ├─ config/
 │  │  ├─ database.config.ts
 │  │  └─ env.config.ts
 │  ├─ customers/
 │  │  ├─ migrations/
 │  │  │  └─ customers.sql
-│  │  ├─ customer.controller.ts
-│  │  ├─ customer.entity.ts
-│  │  ├─ customer.http
-│  │  ├─ customer.mongodb.repository.ts
-│  │  ├─ customer.postgres.repository.ts
-│  │  ├─ customer.repository.interface.ts
-│  │  └─ customer.routes.ts
+│  │  ├─ customers.controller.ts
+│  │  ├─ customers.entity.ts
+│  │  ├─ customers.http
+│  │  ├─ customers.mongodb.repository.ts
+│  │  ├─ customers.postgres.repository.ts
+│  │  ├─ customers.repository.interface.ts
+│  │  └─ customers.routes.ts
 │  ├─ middleware/
 │  │  ├─ auth.middleware.ts
 │  │  ├─ error.middleware.ts
 │  │  ├─ logging.middleware.ts
 │  │  └─ validate.middleware.ts
+│  ├─ notifications/
+│  │  ├─ migrations/
+│  │  │  └─ notifications.sql
+│  │  ├─ notifications.controller.ts
+│  │  ├─ notifications.entity.ts
+│  │  ├─ notifications.postgres.repository.ts
+│  │  ├─ notifications.repository.interface.ts
+│  │  ├─ notifications.routes.ts
+│  │  └─ notifications.service.ts
 │  ├─ payments/
 │  │  ├─ migrations/
 │  │  │  └─ payments.sql
@@ -62,21 +77,28 @@ turnero/
 │  │  ├─ services.postgres.repository.ts
 │  │  ├─ services.repository.interface.ts
 │  │  ├─ services.routes.ts
-│  │  └─ services.tests.ts
+│  ├─ settings/
+│  │  ├─ migrations/
+│  │  │  └─ settings.sql
+│  │  ├─ settings.controller.ts
+│  │  ├─ settings.entity.ts
+│  │  ├─ settings.postgres.repository.ts
+│  │  ├─ settings.repository.interface.ts
+│  │  └─ settings.routes.ts
 │  ├─ setup/
+│  │  ├─ migrations/
+│  │  │  └─ setup.sql
 │  │  ├─ setup.controller.ts
 │  │  ├─ setup.http
-│  │  ├─ setup.routes.ts
-│  │  └─ setup.sql
+│  │  └─ setup.routes.ts
 │  ├─ types/
 │  │  └─ index.ts
 │  ├─ utils/
-│  │  ├─ migrations/
-│  │  │  └─ notifications.sql
 │  │  ├─ helpers.ts
 │  │  ├─ logger.ts
 │  │  └─ notifications.ts
-│  └─ app.ts
+│  ├─ app.ts
+│  └─ estructura.txt
 ├─ .env
 ├─ .gitignore
 ├─ bd.md
@@ -85,4 +107,3 @@ turnero/
 ├─ package-lock.json
 ├─ package.json
 └─ tsconfig.json
-
