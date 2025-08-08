@@ -46,3 +46,43 @@ Content-Type: application/json
 
 ### borrar un customer
 DELETE http://localhost:3000/api/customers/684b9907d79c41bdd6f62e03
+
+
+
+### Variables de entorno
+@baseUrl = http://localhost:3000/api
+@professionalId = 11
+@pendingUserId1 = 2
+@pendingUserId2 = 3
+@approvedUserId = 6
+
+### 1. Obtener todos los clientes
+GET {{baseUrl}}/customers/all
+x-user-id: {{professionalId}}
+
+### 2. Aprobar un usuario pendiente (HU14)
+PUT {{baseUrl}}/customers/{{pendingUserId1}}/validate
+x-user-id: {{professionalId}}
+Content-Type: application/json
+
+{
+  "status": "approved"
+}
+
+### 3. Rechazar un usuario pendiente (HU14)
+PUT {{baseUrl}}/customers/{{pendingUserId2}}/validate
+x-user-id: {{professionalId}}
+Content-Type: application/json
+
+{
+  "status": "rejected"
+}
+
+### 4. Error: Intentar aprobar un usuario ya aprobado
+PUT {{baseUrl}}/customers/{{approvedUserId}}/validate
+x-user-id: {{professionalId}}
+Content-Type: application/json
+
+{
+  "status": "approved"
+}

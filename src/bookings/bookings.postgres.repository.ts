@@ -1,19 +1,9 @@
-import { Client } from 'pg';
+
+import { pool } from '../config/database.config.js';
 import { Booking } from './bookings.entity.js';
 import { BookingsRepository } from './bookings.repository.interface.js';
 
-const client = new Client({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'turnero',
-  password: process.env.DB_PASSWORD || 'postgres',
-  port: Number(process.env.DB_PORT) || 5432,
-});
-
 export class BookingsPostgresRepository implements BookingsRepository {
-  constructor() {
-    client.connect();
-  }
   findAll(params: { clientId: number; status?: string; dateFrom?: Date; dateTo?: Date; }): Promise<Booking[] | undefined> {
     throw new Error('Method not implemented.');
   }
@@ -51,7 +41,7 @@ export class BookingsPostgresRepository implements BookingsRepository {
         WHERE date = $1
         ORDER BY start_time
       `;
-      const res = await client.query(query, [date]);
+      const res = await pool.query(query, [date]);
       return res.rows.map(
         (row) =>
           new Booking(
