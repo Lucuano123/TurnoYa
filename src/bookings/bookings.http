@@ -7,11 +7,11 @@ POST http://localhost:3000/api/bookings
 Content-Type: application/json
 
 {
-  "clientId": 1,
-  "serviceId": 2,
-  "date": "2025-08-05T09:00:00Z",
+  "clientId": 2,
+  "serviceId": 3,
+  "date": "2025-08-07T09:00:00Z",
   "startTime": "09:00",
-  "endTime": "10:00",
+  "endTime": "11:00",
   "status": "pending"
 }
 
