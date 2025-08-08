@@ -17,8 +17,7 @@ Content-Type: application/json
 
 ################################################################################
 ### 1. Obtener lista de usuarios pendientes
-# Verificar que haya inicialmente 5 usuarios pendientes.
-# (Va a aparecer el log en la terminal)
+# Verificar que haya inicialmente 5 usuarios pendientes. (Va a aparecer el log en la terminal)
 ################################################################################
 
 GET http://localhost:3000/api/customers/pending
@@ -84,7 +83,5 @@ Content-Type: application/json
 
 ################################################################################
 # FIN DEL FLUJO DE PRUEBAS
-#
-# Para volver a empezar, ejecutar nuevamente el endpoint de inicialización
-# al comienzo del archivo.
+# Para volver a empezar, ejecutar nuevamente el endpoint de inicialización al comienzo del archivo.
 ################################################################################
