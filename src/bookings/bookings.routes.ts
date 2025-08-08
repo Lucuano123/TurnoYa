@@ -15,7 +15,7 @@ bookingsRouter.get(
 
 // Definición de rutas
 
-bookingsRouter.post('/', sanitizeBookingInput, bookingsController.addBookings);
+bookingsRouter.post('/', sanitizeBookingInput, bookingsController.addBookings.bind(bookingsController));
 
 function sanitizeBookingInput(req:any, res:any, next:any) {
 

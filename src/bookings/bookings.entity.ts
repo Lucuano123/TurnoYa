@@ -10,8 +10,8 @@ export class Booking {
     public startTime: string,
     public endTime: string,
     public status: 'confirmed' | 'cancelled' | 'completed' | 'pending',
-    public treatmentId: string = crypto.randomUUID(),
-    public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date(),
+    public treatment_id: string = crypto.randomUUID(),
+    public created_at: Date = new Date(),
+    public updated_at: Date = new Date(),
   ) {}
 }
