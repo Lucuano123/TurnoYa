@@ -21,7 +21,7 @@ CREATE INDEX idx_bookings_date ON bookings(booking_date);
 CREATE INDEX idx_bookings_treatment_id ON bookings(treatment_id);
 
 -- Insertar datos de prueba con IDs explícitos
-INSERT INTO bookings (id, client_id, service_id, booking_date, start_time, end_time, booking_status, treatment_id) VALUES
-  (1, 1, 1, '2025-08-01', '09:00', '09:30', 'confirmed', gen_random_uuid()),
-  (2, 2, 2, '2025-08-01', '14:00', '14:45', 'pending', gen_random_uuid()),
-  (3, 1, 3, '2025-08-02', '10:00', '11:00', 'confirmed', gen_random_uuid());
+INSERT INTO bookings ( client_id, service_id, booking_date, start_time, end_time, booking_status, treatment_id) VALUES
+  ( 1, 1, '2025-08-01', '09:00', '09:30', 'confirmed', gen_random_uuid()),
+  ( 2, 2, '2025-08-01', '14:00', '14:45', 'pending', gen_random_uuid()),
+  ( 1, 3, '2025-08-02', '10:00', '11:00', 'confirmed', gen_random_uuid());

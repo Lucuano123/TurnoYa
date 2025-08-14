@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import { BookingsController } from './bookings.controller.js';
-import { authMiddleware } from '../middleware/auth.middleware.js';
-import { BookingsPostgresRepository } from './bookings.postgres.repository.js';
 
 export const bookingsRouter = Router();
 const bookingsController = new BookingsController();
@@ -9,7 +7,6 @@ const bookingsController = new BookingsController();
 // Ruta para obtener las reservas diarias del profesional (HU10)
 bookingsRouter.get(
   '/professional/bookings',
- // authMiddleware(['professional']),
   bookingsController.getProfessionalBookings.bind(bookingsController)
 );
 
@@ -20,16 +17,15 @@ bookingsRouter.post('/', sanitizeBookingInput, bookingsController.addBookings.bi
 function sanitizeBookingInput(req:any, res:any, next:any) {
 
   req.body.sanitizedInput = {
-    id: req.body.id,
-    clientId: req.body.clientId,
-    serviceId: req.body.serviceId,
-    booking_date: req.body.date,
-    startTime: req.body.startTime,
-    endTime: req.body.endTime,
-    booking_status: req.body.status,
-    treatmentId: req.body.treatmentId || undefined,
-    createdAt: req.body.createdAt || new Date(),
-    updatedAt: req.body.updatedAt || new Date(),
+    client_id: req.body.client_id,
+    service_id: req.body.service_id,
+    booking_date: req.body.booking_date,
+    start_time: req.body.start_time,
+    end_time: req.body.end_time,
+    booking_status: req.body.booking_status,
+    treatment_id: req.body.treatment_id || undefined,
+    created_at: req.body.created_at || new Date(),
+    updated_at: req.body.updated_at || new Date(),
   }
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
