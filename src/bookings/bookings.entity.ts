@@ -4,12 +4,12 @@ import crypto from 'node:crypto';
 export class Booking {
   constructor(
     public id: number,
-    public clientId: number,
-    public serviceId: number,
-    public date: Date,
-    public startTime: string,
-    public endTime: string,
-    public status: 'confirmed' | 'cancelled' | 'completed' | 'pending',
+    public client_id: number,
+    public service_id: number,
+    public booking_date: Date,
+    public start_time: string,
+    public end_time: string,
+    public booking_status: 'confirmed' | 'cancelled' | 'completed' | 'pending',
     public treatment_id: string = crypto.randomUUID(),
     public created_at: Date = new Date(),
     public updated_at: Date = new Date(),

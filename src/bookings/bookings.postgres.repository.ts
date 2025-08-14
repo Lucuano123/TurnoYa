@@ -11,12 +11,12 @@ export class BookingsPostgresRepository implements BookingsRepository {
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
         [
-          booking.clientId,
-          booking.serviceId,
-          booking.date.toISOString().split('T')[0], // Formato YYYY-MM-DD
-          booking.startTime,
-          booking.endTime,
-          booking.status,
+          booking.client_id,
+          booking.service_id,
+          booking.booking_date.toISOString().split('T')[0], // Formato YYYY-MM-DD
+          booking.start_time,
+          booking.end_time,
+          booking.booking_status,
           booking.treatment_id,
           booking.created_at,
           booking.updated_at
@@ -26,12 +26,12 @@ export class BookingsPostgresRepository implements BookingsRepository {
       const newBooking = res.rows[0];
       return new Booking(
         newBooking.id,
-        newBooking.clientId,
-        newBooking.serviceId,
-        newBooking.date,
-        newBooking.startTime,
-        newBooking.endTime,
-        newBooking.status,
+        newBooking.client_id,
+        newBooking.service_id,
+        newBooking.booking_date,
+        newBooking.start_time,
+        newBooking.end_time,
+        newBooking.booking_status,
         newBooking.treatment_id,
         newBooking.created_at,
         newBooking.updated_at

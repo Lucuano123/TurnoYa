@@ -58,12 +58,12 @@ export class BookingsController {
       
       const newBooking = new Booking(
         input.id,
-        input.clientId,
-        input.serviceId,
-        new Date(input.date),
-        input.startTime,
-        input.endTime,
-        input.status,
+        input.client_id,
+        input.service_id,
+        new Date(input.booking_date),
+        input.start_time,
+        input.end_time,
+        input.booking_status,
         input.treatment_id || crypto.randomUUID(),
         input.created_at || new Date(),
         input.updated_at || new Date()
