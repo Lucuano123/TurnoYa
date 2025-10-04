@@ -1,1 +1,0 @@
-// Rutas para /auth/register, /auth/login

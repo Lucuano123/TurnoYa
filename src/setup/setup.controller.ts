@@ -31,14 +31,14 @@ export class SetupController {
 
       // Lista de migraciones en orden para crear tablas y datos
       const migrations = [
-        'categories/migrations/categories.sql',
+        'setup/migrations/categories.sql',
         'customers/migrations/customers.sql',
         'services/migrations/services.sql',
-        'availabilities/migrations/availabilities.sql',
+        'setup/migrations/availabilities.sql',
         'bookings/migrations/bookings.sql',
-        'payments/migrations/payments.sql',
-        'notifications/migrations/notifications.sql',
-        'settings/migrations/settings.sql',
+        'setup/migrations/payments.sql',
+        'setup/migrations/notifications.sql',
+        'setup/migrations/settings.sql',
       ];
 
       // Ejecutar cada migración
