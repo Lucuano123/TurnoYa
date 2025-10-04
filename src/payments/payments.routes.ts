@@ -1,1 +1,0 @@
-// Rutas para /payments

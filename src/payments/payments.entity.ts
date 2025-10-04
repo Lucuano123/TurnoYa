@@ -1,1 +1,0 @@
-// Entidad TypeScript para payments

@@ -1,0 +1,109 @@
+turnero/
+├─ src/
+│  ├─ auth/
+│  │  ├─ migrations/
+│  │  │  └─ auth.sql
+│  │  ├─ auth.controller.ts
+│  │  ├─ auth.routes.ts
+│  │  ├─ auth.service.ts
+│  │  └─ auth.tests.ts
+│  ├─ availabilities/
+│  │  ├─ migrations/
+│  │  │  └─ availabilities.sql
+│  │  ├─ availabilities.controller.ts
+│  │  ├─ availabilities.entity.ts
+│  │  ├─ availabilities.postgres.repository.ts
+│  │  ├─ availabilities.repository.interface.ts
+│  │  ├─ availabilities.routes.ts
+│  │  └─ availabilities.tests.ts
+│  ├─ bookings/
+│  │  ├─ migrations/
+│  │  │  └─ bookings.sql
+│  │  ├─ bookings.controller.ts
+│  │  ├─ bookings.entity.ts
+│  │  ├─ bookings.http
+│  │  ├─ bookings.postgres.repository.ts
+│  │  ├─ bookings.repository.interface.ts
+│  │  └─ bookings.routes.ts
+│  ├─ categories/
+│  │  ├─ migrations/
+│  │  │  └─ categories.sql
+│  │  ├─ categories.controller.ts
+│  │  ├─ categories.entity.ts
+│  │  ├─ categories.postgres.repository.ts
+│  │  ├─ categories.repository.interface.ts
+│  │  └─ categories.routes.ts
+│  ├─ config/
+│  │  ├─ database.config.ts
+│  │  └─ env.config.ts
+│  ├─ customers/
+│  │  ├─ migrations/
+│  │  │  └─ customers.sql
+│  │  ├─ customers.controller.ts
+│  │  ├─ customers.entity.ts
+│  │  ├─ customers.http
+│  │  ├─ customers.mongodb.repository.ts
+│  │  ├─ customers.postgres.repository.ts
+│  │  ├─ customers.repository.interface.ts
+│  │  └─ customers.routes.ts
+│  ├─ middleware/
+│  │  ├─ auth.middleware.ts
+│  │  ├─ error.middleware.ts
+│  │  ├─ logging.middleware.ts
+│  │  └─ validate.middleware.ts
+│  ├─ notifications/
+│  │  ├─ migrations/
+│  │  │  └─ notifications.sql
+│  │  ├─ notifications.controller.ts
+│  │  ├─ notifications.entity.ts
+│  │  ├─ notifications.postgres.repository.ts
+│  │  ├─ notifications.repository.interface.ts
+│  │  ├─ notifications.routes.ts
+│  │  └─ notifications.service.ts
+│  ├─ payments/
+│  │  ├─ migrations/
+│  │  │  └─ payments.sql
+│  │  ├─ payments.controller.ts
+│  │  ├─ payments.entity.ts
+│  │  ├─ payments.postgres.repository.ts
+│  │  ├─ payments.repository.interface.ts
+│  │  ├─ payments.routes.ts
+│  │  └─ payments.tests.ts
+│  ├─ services/
+│  │  ├─ migrations/
+│  │  │  └─ services.sql
+│  │  ├─ services.controller.ts
+│  │  ├─ services.entity.ts
+│  │  ├─ services.postgres.repository.ts
+│  │  ├─ services.repository.interface.ts
+│  │  ├─ services.routes.ts
+│  ├─ settings/
+│  │  ├─ migrations/
+│  │  │  └─ settings.sql
+│  │  ├─ settings.controller.ts
+│  │  ├─ settings.entity.ts
+│  │  ├─ settings.postgres.repository.ts
+│  │  ├─ settings.repository.interface.ts
+│  │  └─ settings.routes.ts
+│  ├─ setup/
+│  │  ├─ migrations/
+│  │  │  └─ setup.sql
+│  │  ├─ setup.controller.ts
+│  │  ├─ setup.http
+│  │  └─ setup.routes.ts
+│  ├─ types/
+│  │  └─ index.ts
+│  ├─ utils/
+│  │  ├─ helpers.ts
+│  │  ├─ logger.ts
+│  │  └─ notifications.ts
+│  ├─ app.ts
+│  └─ estructura.txt
+├─ .env
+├─ .gitignore
+├─ bd.md
+├─ CONTRIBUTING.md
+├─ docker-compose.yml
+├─ package-lock.json
+├─ package.json
+└─ tsconfig.json

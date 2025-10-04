@@ -1,0 +1,18 @@
+### Obtener las reservas diarias de un profesional (HU10)
+GET http://localhost:3000/api/bookings/professional/bookings?date=2025-08-02
+// Authorization: Bearer <your-jwt-token>
+
+### Booking service HU03
+POST http://localhost:3000/api/bookings
+Content-Type: application/json
+
+{
+  "client_id": 5,
+  "service_id": 1,
+  "booking_date": "2025-08-07",
+  "start_time": "09:00",
+  "end_time": "11:00",
+  "booking_status": "pending"
+}
+
+

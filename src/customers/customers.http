@@ -1,0 +1,87 @@
+################################################################################
+# PRUEBAS DE VALIDACIÓN DE CLIENTES (HU14)
+#
+# Este archivo cubre el flujo completo para probar la aprobación y rechazo de
+# clientes pendientes por parte de un profesional.
+#
+# Antes de empezar, ejecutar el endpoint de inicialización para resetear la base
+# de datos con los datos de prueba.
+################################################################################
+
+### Inicializar la base de datos con datos de prueba
+# Ejecutar este paso antes de comenzar cualquier prueba.
+POST http://localhost:3000/api/setup/database
+Content-Type: application/json
+
+{}
+
+################################################################################
+### 1. Obtener lista de usuarios pendientes
+# Verificar que haya inicialmente 5 usuarios pendientes. (Va a aparecer el log en la terminal)
+################################################################################
+
+GET http://localhost:3000/api/customers/pending
+x-user-id: 11
+
+################################################################################
+### 2. Aprobar un usuario pendiente (ID = 2)
+# Se cambia el estado del usuario a "approved".
+################################################################################
+
+PUT http://localhost:3000/api/customers/2/validate
+x-user-id: 11
+Content-Type: application/json
+
+{
+  "status": "approved"
+}
+
+################################################################################
+### 3. Rechazar un usuario pendiente (ID = 3)
+# Se cambia el estado del usuario a "rejected".
+################################################################################
+
+PUT http://localhost:3000/api/customers/3/validate
+x-user-id: 11
+Content-Type: application/json
+
+{
+  "status": "rejected"
+}
+
+################################################################################
+### 4. Verificar la nueva lista de pendientes
+# Ahora deberían quedar solo 3 usuarios pendientes (había 5, se procesaron 2).
+################################################################################
+
+GET http://localhost:3000/api/customers/pending
+x-user-id: 11
+
+################################################################################
+### 4.1 Verificar todos los usuarios (no solo los pendientes)
+# Este endpoint devuelve todos los clientes visibles por el profesional.
+# Se debería ver que:
+# - El usuario 2 tiene status 'approved'
+# - El usuario 3 tiene status 'rejected'
+################################################################################
+
+GET http://localhost:3000/api/customers/all
+x-user-id: 11
+
+################################################################################
+### 5. Intentar aprobar un usuario ya aprobado (ID = 6)
+# Este paso debería devolver un error. El usuario no está pendiente.
+################################################################################
+
+PUT http://localhost:3000/api/customers/6/validate
+x-user-id: 11
+Content-Type: application/json
+
+{
+  "status": "approved"
+}
+
+################################################################################
+# FIN DEL FLUJO DE PRUEBAS
+# Para volver a empezar, ejecutar nuevamente el endpoint de inicialización al comienzo del archivo.
+################################################################################
