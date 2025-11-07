@@ -1,15 +1,15 @@
 export class Services {
 
   constructor(
-    public id: string,
+    public id: number,
     public name: string,
-    public descipcion: string,
-    public duracion: number,
+    public description: string,
+    public duration: number,
     public price: number,
     public category_id: number,
     public image_url: string,
-    private created_at: Date,
-    private updated_at: Date,
-  ) { }
+    public created_at: Date,
+    public updated_at: Date,
+  ) {}
 
 }

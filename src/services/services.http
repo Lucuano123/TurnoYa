@@ -1,17 +1,43 @@
+### Obtener todos los servicios
 GET http://localhost:3000/api/services
 
-### HU03
+### Obtener un servicio por ID
+GET http://localhost:3000/api/services/1
+
+### Update un servicio por ID
+PUT http://localhost:3000/api/services/1
+Content-Type: application/json
+
+{
+  "name": "Updated Service",
+  "description": "This is an updated service",
+  "duration": 45,
+  "price": "80.00",
+  "category_id": "2",
+  "image_url": "http://example.com/updated_image.jpg"
+}
+
+### Update parcial de un servicio por ID
+PATCH http://localhost:3000/api/services/1
+Content-Type: application/json
+
+{
+  "price": "90.00",
+  "duration": 50
+}
+
+### Crear un nuevo servicio
 POST http://localhost:3000/api/services
 Content-Type: application/json
 
 {
   "name": "New Service",
   "description": "This is a new service",
-  "duracion": "60",
+  "duration": 60,
   "price": "100.00",
   "category_id": "1",
-  "image_url": "http://example.com/image.jpg",
-  "created_at": "2023-10-01T00:00:00Z",
-  "updated_at": "2023-10-01T00:00:00Z"
-
+  "image_url": "http://example.com/image.jpg"
 }
+
+#### Eliminar un servicio por ID
+DELETE http://localhost:3000/api/services/4
