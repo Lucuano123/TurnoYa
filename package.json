@@ -12,8 +12,10 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.21",
+    "cors": "^2.8.5",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.1.3"
   },

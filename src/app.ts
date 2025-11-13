@@ -4,8 +4,15 @@ import { bookingsRouter } from './bookings/bookings.routes.js';
 import { setupRouter } from './setup/setup.routes.js';
 import servicesRouter from './services/services.routes.js';
 
+import cors from 'cors';
 
 const app = express();
+
+// Habilitar CORS para todas las rutas
+app.use(cors({
+  origin: 'http://localhost:4200', // el frontend Angular
+  credentials: true
+}));
 
 app.use(express.json())
 

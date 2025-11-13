@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+/*import { Request, Response, NextFunction } from 'express';
 import { pool } from '../config/database.config.js';
 
 interface Customer {
@@ -49,4 +49,4 @@ export const authMiddleware = (roles: string[] = []) => {
       res.status(500).json({ error: { message: 'Error del servidor', code: 'SERVER_ERROR', status: 500, cause: error instanceof Error ? error.message : String(error) } });
     }
   };
-};
+};*/
