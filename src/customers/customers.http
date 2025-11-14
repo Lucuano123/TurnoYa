@@ -85,3 +85,18 @@ Content-Type: application/json
 # FIN DEL FLUJO DE PRUEBAS
 # Para volver a empezar, ejecutar nuevamente el endpoint de inicialización al comienzo del archivo.
 ################################################################################
+
+POST http://localhost:3000/api/customers
+Content-Type: application/json
+
+{
+  "first_name": "Juan",
+  "last_name": "Pérez",
+  "email": "juan@example.com",
+  "password": "123456",
+  "phone": "3411234567",
+  "birth_date": "1990-05-10",
+  "status": "pending",
+  "role": "customer"
+}
+

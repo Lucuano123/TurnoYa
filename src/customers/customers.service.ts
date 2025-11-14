@@ -54,7 +54,6 @@ export class CustomersService {
 
   async createCustomer(data: Partial<Customer>): Promise<Customer> {
     try {
-
       const newCustomer = await this.customersRepository.create(data);
       return newCustomer;
     } catch (error) {

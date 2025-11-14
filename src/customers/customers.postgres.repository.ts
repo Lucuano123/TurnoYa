@@ -68,8 +68,8 @@ export class CustomersPostgresRepository {
   }
 
   async create(data: Partial<Customer>): Promise<Customer> {
-    try {
-      const query = `
+  try {
+    const query = `
       INSERT INTO customers (
         first_name,
         last_name,
@@ -78,36 +78,34 @@ export class CustomersPostgresRepository {
         phone,
         birth_date,
         status,
-        role,
-        created_at,
-        updated_at
+        role
       )
       VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8,
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
+        $1, $2, $3, $4, $5, $6, $7, $8
       )
-      RETURNING *
+      RETURNING *;
     `;
 
-      const params = [
-        data.first_name ?? null,
-        data.last_name ?? null,
-        data.email ?? null,
-        data.password ?? null,
-        data.phone ?? null,
-        data.birth_date ?? null,
-        data.status ?? 'pending',
-        data.role ?? 'customer'
-      ];
+    const params = [
+      data.first_name ?? null,
+      data.last_name ?? null,
+      data.email ?? null,
+      data.password ?? null,
+      data.phone ?? null,
+      data.birth_date ?? null, // debe ser formato YYYY-MM-DD
+      data.status ?? 'pending',
+      data.role ?? 'customer'
+    ];
 
-      const { rows } = await pool.query<Customer>(query, params);
-      return rows[0];
-    } catch (error) {
-      console.error('[CustomersPostgresRepository] Error en create:', error);
-      throw new Error('Error al crear cliente');
-    }
+    const { rows } = await pool.query<Customer>(query, params);
+    return rows[0];
+
+  } catch (error) {
+    console.error('[CustomersPostgresRepository] Error en create:', error);
+    throw new Error('Error al crear cliente');
   }
+}
+
 
   async update(id: number, data: Partial<Customer>): Promise<Customer> {
     try {
