@@ -2,7 +2,7 @@ import { CustomersPostgresRepository } from './customers.postgres.repository.js'
 import { Customer } from './customers.entity.js';
 
 export class CustomersService {
-  constructor(private customersRepository: CustomersPostgresRepository) {}
+  constructor(private customersRepository: CustomersPostgresRepository) { }
 
   // Actualiza el estado de un cliente (approve / reject)
   async validateUser(userId: number, status: 'approved' | 'rejected'): Promise<Customer> {
@@ -47,6 +47,36 @@ export class CustomersService {
       return customer || null;
     } catch (error) {
       console.error('[CustomersService] Error al obtener cliente por ID:', error);
+      throw error;
+    }
+  }
+
+
+  async createCustomer(data: Partial<Customer>): Promise<Customer> {
+    try {
+
+      const newCustomer = await this.customersRepository.create(data);
+      return newCustomer;
+    } catch (error) {
+      console.error('[CustomersService] Error al crear cliente:', error);
+      throw error;
+    }
+  }
+
+
+
+  async updateCustomer(id: number, data: Partial<Customer>): Promise<Customer> {
+    try {
+      const existing = await this.customersRepository.findById(id);
+
+      if (!existing) {
+        throw new Error('CUSTOMER_NOT_FOUND');
+      }
+
+      const updated = await this.customersRepository.update(id, data);
+      return updated;
+    } catch (error) {
+      console.error('[CustomersService] Error al actualizar cliente:', error);
       throw error;
     }
   }

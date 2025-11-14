@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { CustomersService } from './customers.service.js';
 import { CustomersPostgresRepository } from './customers.postgres.repository.js';
+import { pool } from '../config/database.config.js';
+import { Customer } from './customers.entity.js';
 
 export class CustomersController {
   private customersService: CustomersService;
 
   constructor() {
-    // El controller crea su propio servicio y repositorio (como en characters)
+    
     const repository = new CustomersPostgresRepository();
     this.customersService = new CustomersService(repository);
   }
@@ -123,5 +125,56 @@ export class CustomersController {
       });
     }
   }
+  
+  // PUT /api/customers/:id
+async updateCustomer(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const updated = await this.customersService.updateCustomer(parseInt(id), data);
+
+    res.status(200).json({ data: updated });
+
+  } catch (error: any) {
+    console.error('[CustomersController] Error en updateCustomer:', error);
+
+    if (error.message === 'CUSTOMER_NOT_FOUND') {
+      res.status(404).json({
+        error: { message: 'Cliente no encontrado', code: 'CUSTOMER_NOT_FOUND', status: 404 }
+      });
+      return;
+    }
+
+    res.status(500).json({
+      error: { message: 'Error al actualizar cliente', code: 'SERVER_ERROR', status: 500 }
+    });
+  }
+}
+
+  
+
+
+  // POST /api/customers
+  async createCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('[CustomersController] createCustomer');
+      const data = req.body;
+
+      const newCustomer = await this.customersService.createCustomer(data);
+
+      res.status(201).json({ data: newCustomer });
+    } catch (error) {
+      console.error('[CustomersController] Error en createCustomer:', error);
+      res.status(500).json({
+        error: {
+          message: 'Error al crear cliente',
+          code: 'SERVER_ERROR',
+          status: 500,
+        }
+      });
+    }
+  }
+
 
 }

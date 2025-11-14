@@ -9,5 +9,7 @@ customerRouter.get('/all', customersController.getAllCustomers.bind(customersCon
 customerRouter.get('/pending', customersController.getPendingUsers.bind(customersController));
 customerRouter.put('/:id/validate', customersController.validateUser.bind(customersController));
 customerRouter.get('/:id', customersController.getCustomerById.bind(customersController));
+customerRouter.post('/', customersController.createCustomer.bind(customersController));
+customerRouter.put('/:id', customersController.updateCustomer);
 
 export default customerRouter;
