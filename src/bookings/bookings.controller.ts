@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { BookingsPostgresRepository } from './bookings.postgres.repository.js';
 import { Booking } from './bookings.entity.js';
-import { BookingsRepository } from './bookings.repository.interface.js';
+import { BookingsService } from './bookings.service.js';
 import crypto from 'node:crypto';
 
 export class BookingsController {
-  private readonly bookingsRepository: BookingsPostgresRepository;
-
+  private bookingsService: BookingsService;
   constructor() {
-    this.bookingsRepository = new BookingsPostgresRepository();
+    const repository = new BookingsPostgresRepository();
+    this.bookingsService = new BookingsService(repository);
   }
 
   // HU10: Obtener reservas siendo profesional
@@ -18,9 +18,8 @@ export class BookingsController {
     next: NextFunction
   ): Promise<void> => {
     const date = req.query.date as string || new Date().toISOString().split('T')[0];
-    
+
     try {
-      // Validar formato de fecha (ISO 8601: YYYY-MM-DD)
       if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         res.status(400).json({
           error: {
@@ -31,11 +30,9 @@ export class BookingsController {
         });
         return;
       }
-      
-      // Consultar reservas desde el repositorio
-      const bookings = await this.bookingsRepository.getProfessionalBookings(date);
-      
-      // Devolver array vacío si no hay reservas
+
+      const bookings = await this.bookingsService.getProfessionalBookings(date);
+
       res.status(200).json({ data: bookings || [] });
     } catch (error) {
       console.error('Error in getProfessionalBookings:', error);
@@ -50,12 +47,12 @@ export class BookingsController {
     }
   };
 
-  //HU03 - Solución para el error de tipo
+  //HU03
   addBookings = async (req: Request, res: Response) => {
     try {
       const input = req.body.sanitizedInput || req.body;
       console.log("Datos recibidos:", input);
-      
+
       const newBooking = new Booking(
         input.id,
         input.client_id,
@@ -68,18 +65,17 @@ export class BookingsController {
         input.created_at || new Date(),
         input.updated_at || new Date()
       );
-      
+
       console.log("Booking creado:", newBooking);
-      
-      const savedBooking = await this.bookingsRepository.add(newBooking);
+
+      const savedBooking = await this.bookingsService.addBookings(newBooking);
       res.status(201).json({ data: savedBooking });
     } catch (error) {
       console.error("Error detallado:", error);
-      
-      // Manejo seguro del error
+
       let errorMessage = 'Error al crear la reserva';
       let errorDetails = 'Ocurrió un error inesperado';
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
         errorDetails = error.stack || 'No hay stack trace disponible';
@@ -88,7 +84,7 @@ export class BookingsController {
       } else if (error && typeof error === 'object' && 'message' in error) {
         errorMessage = String(error.message);
       }
-      
+
       res.status(500).json({
         error: {
           message: errorMessage,
@@ -99,4 +95,39 @@ export class BookingsController {
       });
     }
   };
+  async getAllBookings(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('[BookingsController] getAllBookings');
+      const bookings = await this.bookingsService.getAllBookings();
+      res.status(200).json({ data: bookings });
+    } catch (error) {
+      console.error('[BookingsController] Error en getAllBookings:', error);
+      res.status(500).json({
+        error: {
+          message: 'Error al obtener todas las reservas',
+          code: 'SERVER_ERROR',
+          status: 500,
+        },
+      });
+    }
+  }
+
+  async getBookingById(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('[BookingsController] getBookingById');
+      const { id } = req.params;
+      const booking = await this.bookingsService.getBookingById(parseInt(id));
+      res.status(200).json({ data: booking });
+    }
+    catch (error) {
+      console.error('[BookingsController] Error en getBookingById:', error);
+      res.status(500).json({
+        error: {
+          message: 'Error al obtener reserva por ID',
+          code: 'SERVER_ERROR',
+          status: 500,
+        },
+      });
+    }
+  }
 }

@@ -1,8 +1,7 @@
 import { Booking } from './bookings.entity.js';
-import { BookingsRepository } from './bookings.repository.interface.js';
 import { pool } from '../config/database.config.js';
 
-export class BookingsPostgresRepository implements BookingsRepository {
+export class BookingsPostgresRepository {
 
   async add(booking: Booking): Promise<Booking> {
     try {
@@ -23,7 +22,7 @@ export class BookingsPostgresRepository implements BookingsRepository {
         [
           booking.client_id,
           booking.service_id,
-          booking.booking_date, // ya debería venir como Date o string YYYY-MM-DD
+          booking.booking_date,
           booking.start_time,
           booking.end_time,
           booking.booking_status,
@@ -49,6 +48,37 @@ export class BookingsPostgresRepository implements BookingsRepository {
     } catch (error) {
       console.error('Error adding booking:', error);
       throw error;
+    }
+  }
+
+  async findById(id: number): Promise<Booking | null> {
+    try {
+      const query = 'SELECT * FROM bookings WHERE id = $1';
+      const { rows } = await pool.query<Booking>(query, [id]);
+      return rows[0] || null;
+    } catch (error) {
+      throw new Error('Error al obtener reserva por ID');
+    }
+  }
+
+    async findAll(): Promise<Booking[]> {
+    const query = `SELECT  id,
+        client_id,
+        service_id,
+        booking_date,
+        start_time,
+        end_time,
+        booking_status,
+        treatment_id,
+        updated_at,
+        created_at
+        FROM bookings 
+        ORDER BY id`;
+    try {
+      const { rows } = await pool.query<Booking>(query);
+      return rows;
+    } catch (error) {
+      throw new Error('Error al obtener todas las reservas');
     }
   }
 
