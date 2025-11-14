@@ -152,26 +152,32 @@ async updateCustomer(req: Request, res: Response): Promise<void> {
   }
 }
 
-  // POST /api/customers
-  async createCustomer(req: Request, res: Response): Promise<void> {
-    try {
-      console.log('[CustomersController] createCustomer');
-      const data = req.body;
+  /// POST /api/customers
+async createCustomer(req: Request, res: Response): Promise<void> {
+  try {
+    console.log('---- [Controller] POST /api/customers ----');
+    console.log('[Controller] Body recibido:', req.body);
 
-      const newCustomer = await this.customersService.createCustomer(data);
+    const data = req.body;
 
-      res.status(201).json({ data: newCustomer });
-    } catch (error) {
-      console.error('[CustomersController] Error en createCustomer:', error);
-      res.status(500).json({
-        error: {
-          message: 'Error al crear cliente',
-          code: 'SERVER_ERROR',
-          status: 500,
-        }
-      });
-    }
+    console.log('[Controller] Llamando al service.createCustomer...');
+    const newCustomer = await this.customersService.createCustomer(data);
+    console.log('[Controller] Respuesta del service:', newCustomer);
+
+    res.status(201).json({ data: newCustomer });
+  } catch (error) {
+    console.error('[Controller] Error en createCustomer:', error);
+
+    res.status(500).json({
+      error: {
+        message: 'Error al crear cliente',
+        code: 'SERVER_ERROR',
+        status: 500,
+      }
+    });
   }
+}
+
   // DELETE /api/customers/:id
  async deleteCustomer(req: Request, res: Response): Promise<void> {
   try {
