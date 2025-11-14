@@ -80,4 +80,19 @@ export class CustomersService {
       throw error;
     }
   }
+  async deleteCustomer(id: number): Promise<void> {
+  try {
+    const existing = await this.customersRepository.findById(id);
+
+    if (!existing) {
+      throw new Error('CUSTOMER_NOT_FOUND');
+    }
+
+    await this.customersRepository.delete(id);
+  } catch (error) {
+    console.error('[CustomersService] Error al eliminar cliente:', error);
+    throw error;
+  }
+}
+
 }

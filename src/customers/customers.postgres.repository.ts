@@ -3,7 +3,7 @@ import { Customer } from './customers.entity.js';
 import { CustomersService } from './customers.service.js';
 
 export class CustomersPostgresRepository {
-  
+
 
   async findById(id: number): Promise<Customer | null> {
     try {
@@ -110,46 +110,46 @@ export class CustomersPostgresRepository {
   }
 
   async update(id: number, data: Partial<Customer>): Promise<Customer> {
-  try {
-    // 1) Verifico si el cliente existe
-    const customer = await this.findById(id);
-    if (!customer) {
-      throw new Error('CUSTOMER_NOT_FOUND');
-    }
+    try {
+      // 1) Verifico si el cliente existe
+      const customer = await this.findById(id);
+      if (!customer) {
+        throw new Error('CUSTOMER_NOT_FOUND');
+      }
 
-    // 2) Validaciones de status/role
-    const allowedStatus = ['pending', 'approved', 'rejected'];
-    const allowedRoles = ['customer', 'professional'];
+      // 2) Validaciones de status/role
+      const allowedStatus = ['pending', 'approved', 'rejected'];
+      const allowedRoles = ['customer', 'professional'];
 
-    if (data.status && !allowedStatus.includes(data.status)) {
-      throw new Error(`INVALID_STATUS: ${data.status}`);
-    }
+      if (data.status && !allowedStatus.includes(data.status)) {
+        throw new Error(`INVALID_STATUS: ${data.status}`);
+      }
 
-    if (data.role && !allowedRoles.includes(data.role)) {
-      throw new Error(`INVALID_ROLE: ${data.role}`);
-    }
+      if (data.role && !allowedRoles.includes(data.role)) {
+        throw new Error(`INVALID_ROLE: ${data.role}`);
+      }
 
-    // 3) Formateo de fecha si viene en ISO con "T"
-    let birthDate = data.birth_date ?? customer.birth_date;
+      // 3) Formateo de fecha si viene en ISO con "T"
+      let birthDate = data.birth_date ?? customer.birth_date;
 
-    if (typeof birthDate === 'string' && birthDate.includes('T')) {
-      birthDate = birthDate.split('T')[0]; // yyyy-MM-dd
-    }
+      if (typeof birthDate === 'string' && birthDate.includes('T')) {
+        birthDate = birthDate.split('T')[0]; // yyyy-MM-dd
+      }
 
-    // 4) Merge final (data pisa a existing si viene definida)
-    const merged: Partial<Customer> = {
-      first_name: data.first_name ?? customer.first_name,
-      last_name: data.last_name ?? customer.last_name,
-      email: data.email ?? customer.email,
-      password: data.password ?? customer.password,
-      phone: data.phone ?? customer.phone,
-      birth_date: birthDate,
-      status: data.status ?? customer.status,
-      role: data.role ?? customer.role
-    };
+      // 4) Merge final (data pisa a existing si viene definida)
+      const merged: Partial<Customer> = {
+        first_name: data.first_name ?? customer.first_name,
+        last_name: data.last_name ?? customer.last_name,
+        email: data.email ?? customer.email,
+        password: data.password ?? customer.password,
+        phone: data.phone ?? customer.phone,
+        birth_date: birthDate,
+        status: data.status ?? customer.status,
+        role: data.role ?? customer.role
+      };
 
-    // 5) Query final
-    const query = `
+      // 5) Query final
+      const query = `
       UPDATE customers SET
         first_name = $1,
         last_name = $2,
@@ -164,36 +164,48 @@ export class CustomersPostgresRepository {
       RETURNING *
     `;
 
-    const params = [
-      merged.first_name,
-      merged.last_name,
-      merged.email,
-      merged.password,
-      merged.phone,
-      merged.birth_date,
-      merged.status,
-      merged.role,
-      id
-    ];
+      const params = [
+        merged.first_name,
+        merged.last_name,
+        merged.email,
+        merged.password,
+        merged.phone,
+        merged.birth_date,
+        merged.status,
+        merged.role,
+        id
+      ];
 
-    console.log('[UPDATE] Ejecutando:', { query, params });
+      console.log('[UPDATE] Ejecutando:', { query, params });
 
-    const { rows } = await pool.query<Customer>(query, params);
+      const { rows } = await pool.query<Customer>(query, params);
 
-    if (!rows.length) {
-      throw new Error('CUSTOMER_NOT_FOUND');
+      if (!rows.length) {
+        throw new Error('CUSTOMER_NOT_FOUND');
+      }
+
+      return rows[0];
+
+    } catch (error: any) {
+      console.error('[CustomersPostgresRepository] Error en update:', {
+        message: error.message,
+        stack: error.stack
+      });
+
+      throw error;
     }
-
-    return rows[0];
-
-  } catch (error: any) {
-    console.error('[CustomersPostgresRepository] Error en update:', {
-      message: error.message,
-      stack: error.stack
-    });
-
-    throw error;
   }
-}
+
+  async delete(id: number): Promise<void> {
+    try {
+      const query = 'DELETE FROM customers WHERE id = $1';
+      const result = await pool.query(query, [id]);
+      if (result.rowCount === 0) {
+        throw new Error('CUSTOMER_NOT_FOUND');
+      }
+    } catch (error) {
+      throw new Error('Error al eliminar cliente');
+    }
+  }
 
 }

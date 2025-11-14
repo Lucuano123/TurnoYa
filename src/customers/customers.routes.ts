@@ -10,6 +10,7 @@ customerRouter.get('/pending', customersController.getPendingUsers.bind(customer
 customerRouter.put('/:id/validate', customersController.validateUser.bind(customersController));
 customerRouter.get('/:id', customersController.getCustomerById.bind(customersController));
 customerRouter.post('/', customersController.createCustomer.bind(customersController));
-customerRouter.put('/:id', customersController.updateCustomer);
+customerRouter.put('/:id', customersController.updateCustomer.bind(customersController));
+customerRouter.delete('/:id', customersController.deleteCustomer.bind(customersController));
 
 export default customerRouter;

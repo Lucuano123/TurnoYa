@@ -125,7 +125,7 @@ export class CustomersController {
       });
     }
   }
-  
+
   // PUT /api/customers/:id
 async updateCustomer(req: Request, res: Response): Promise<void> {
   try {
@@ -152,9 +152,6 @@ async updateCustomer(req: Request, res: Response): Promise<void> {
   }
 }
 
-  
-
-
   // POST /api/customers
   async createCustomer(req: Request, res: Response): Promise<void> {
     try {
@@ -175,6 +172,30 @@ async updateCustomer(req: Request, res: Response): Promise<void> {
       });
     }
   }
+  // DELETE /api/customers/:id
+ async deleteCustomer(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+
+    await this.customersService.deleteCustomer(id);
+
+    res.status(204).send(); // No Content
+  } catch (error) {
+    const err = error as Error;
+
+    console.error('[CustomersController] Error en deleteCustomer:', err);
+
+    if (err.message === 'CUSTOMER_NOT_FOUND') {
+      res.status(404).json({ message: 'Cliente no encontrado' });
+      return;
+    }
+
+    res.status(500).json({ message: 'Error al eliminar cliente' });
+  }
+}
+
+
+
 
 
 }
