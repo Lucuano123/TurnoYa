@@ -42,4 +42,33 @@ export class BookingsService {
             throw error;
         }
     }
+    async deleteBooking(id: number): Promise<void> {
+        try {
+            const existing = await this.bookingsRepository.findById(id);
+
+            if (!existing) {
+                throw new Error('BOOKING_NOT_FOUND');
+            }
+
+            await this.bookingsRepository.delete(id);
+        } catch (error) {
+            console.error('[BookingsService] Error al eliminar la reserva:', error);
+            throw error;
+        }
+    }
+    async updateBooking(id: number, updatedBooking: Booking): Promise<Booking | null> {
+        try {
+            const existing = await this.bookingsRepository.findById(id);
+
+            if (!existing) {
+                throw new Error('BOOKING_NOT_FOUND');
+            }
+
+            return await this.bookingsRepository.update(id, updatedBooking);
+        } catch (error) {
+            console.error('[BookingsService] Error al actualizar reserva:', error);
+            throw error;
+        }
+    }
+
 }
