@@ -11,12 +11,11 @@ bookingsRouter.get(
 );
 
 // Definición de rutas
-
-bookingsRouter.post('/', sanitizeBookingInput, bookingsController.addBookings.bind(bookingsController));
-bookingsRouter.get('/api/bookings', sanitizeBookingInput, bookingsController.getAllBookings.bind(bookingsController))
-bookingsRouter.get('/api/bookings/:id', sanitizeBookingInput, bookingsController.getBookingById.bind(bookingsController))
-//bookingsRouter.put('/api/bookings/:id', sanitizeBookingInput, bookingsController.updateBooking.bind(bookingsController))
-//bookingsRouter.delete('/api/bookings/:id', sanitizeBookingInput, bookingsController.deleteBooking.bind(bookingsController))
+bookingsRouter.post('/', bookingsController.addBookings.bind(bookingsController));
+bookingsRouter.get('/', bookingsController.getAllBookings.bind(bookingsController));
+bookingsRouter.get('/:id', bookingsController.getBookingById.bind(bookingsController));
+//bookingsRouter.put('/api/bookings/:id', bookingsController.updateBooking.bind(bookingsController))
+//bookingsRouter.delete('/api/bookings/:id', bookingsController.deleteBooking.bind(bookingsController))
 
 
 function sanitizeBookingInput(req:any, res:any, next:any) {
