@@ -110,7 +110,7 @@ export class BookingsController {
         },
       });
     }
-  }
+  };
 
   async getBookingById(req: Request, res: Response): Promise<void> {
     try {
@@ -129,5 +129,70 @@ export class BookingsController {
         },
       });
     }
-  }
+  };
+
+  async deleteBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+
+      await this.bookingsService.deleteBooking(id);
+
+      res.status(204).send(); // No Content
+    } catch (error) {
+      const err = error as Error;
+
+      console.error('[BookingsController] Error en deleteBooking:', err);
+
+      if (err.message === 'BOOKING_NOT_FOUND') {
+        res.status(404).json({ message: 'Reserva no encontrada' });
+        return;
+      }
+
+      res.status(500).json({ message: 'Error al eliminar reserva' });
+    }
+  };
+
+  updateBooking: RequestHandler = async (req, res, next) => {
+    try {
+      const id = Number(req.params.id);
+      const input = req.body.sanitizedInput || req.body;
+
+      const updatedBooking = new Booking(
+        id,
+        input.client_id,
+        input.service_id,
+        new Date(input.booking_date),
+        input.start_time,
+        input.end_time,
+        input.booking_status,
+        input.treatment_id,
+        input.created_at || new Date(),
+        new Date()
+      );
+
+      const savedBooking = await this.bookingsService.updateBooking(id, updatedBooking);
+
+      if (!savedBooking) {
+        res.status(404).json({ message: "Reserva no encontrada" });
+        return;
+      }
+
+      res.status(200).json({ data: savedBooking });
+      return;
+
+    } catch (error) {
+      console.error("Error en updateBooking:", error);
+
+      res.status(500).json({
+        error: {
+          message: "Error al actualizar la reserva",
+          code: "SERVER_ERROR",
+          status: 500
+        }
+      });
+
+      return;
+    }
+  };
+
 }

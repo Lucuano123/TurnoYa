@@ -31,7 +31,7 @@ export class BookingsPostgresRepository {
           booking.updated_at
         ]
       );
-      
+
       const newBooking = res.rows[0];
       return new Booking(
         newBooking.id,
@@ -61,7 +61,7 @@ export class BookingsPostgresRepository {
     }
   }
 
-    async findAll(): Promise<Booking[]> {
+  async findAll(): Promise<Booking[]> {
     const query = `SELECT  id,
         client_id,
         service_id,
@@ -106,4 +106,67 @@ export class BookingsPostgresRepository {
       throw error;
     }
   }
+  async delete(id: number): Promise<void> {
+    try {
+      const query = 'DELETE FROM bookings WHERE id = $1';
+      const result = await pool.query(query, [id]);
+      if (result.rowCount === 0) {
+        throw new Error('BOOKING_NOT_FOUND');
+      }
+    } catch (error) {
+      throw new Error('Error al eliminar la reserva');
+    }
+  }
+  async update(id: number, booking: Booking): Promise<Booking | null> {
+    try {
+      const query = `
+      UPDATE bookings
+      SET 
+        client_id = $1,
+        service_id = $2,
+        booking_date = $3,
+        start_time = $4,
+        end_time = $5,
+        booking_status = $6,
+        treatment_id = $7,
+        updated_at = NOW()
+      WHERE id = $8
+      RETURNING *;
+    `;
+
+      const values = [
+        booking.client_id,
+        booking.service_id,
+        booking.booking_date,
+        booking.start_time,
+        booking.end_time,
+        booking.booking_status,
+        booking.treatment_id,
+        id
+      ];
+
+      const result = await pool.query(query, values);
+
+      if (result.rows.length === 0) return null;
+
+      const updated = result.rows[0];
+
+      return new Booking(
+        updated.id,
+        updated.client_id,
+        updated.service_id,
+        updated.booking_date,
+        updated.start_time,
+        updated.end_time,
+        updated.booking_status,
+        updated.treatment_id,
+        updated.created_at,
+        updated.updated_at
+      );
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      throw error;
+    }
+  }
+
 }
