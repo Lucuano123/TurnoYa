@@ -2,6 +2,7 @@ import { CustomersPostgresRepository } from './customers.postgres.repository.js'
 import { Customer } from './customers.entity.js';
 
 export class CustomersService {
+  prisma: any;
   constructor(private customersRepository: CustomersPostgresRepository) { }
 
   // Actualiza el estado de un cliente (approve / reject)
@@ -79,19 +80,70 @@ export class CustomersService {
       throw error;
     }
   }
-  async deleteCustomer(id: number): Promise<void> {
-  try {
-    const existing = await this.customersRepository.findById(id);
 
-    if (!existing) {
-      throw new Error('CUSTOMER_NOT_FOUND');
+  /*async deleteCustomer(id: number): Promise<void> {
+
+  const existing = await this.customersRepository.findById(id);
+
+  if (!existing) {
+    throw new Error('CUSTOMER_NOT_FOUND');
+  }
+
+  try {
+    await this.customersRepository.delete(id);
+
+  } catch (error: any) {
+
+    if (error.code === '23503') {
+      throw new Error('CUSTOMER_HAS_BOOKINGS');
     }
 
+    throw new Error('DELETE_ERROR');
+  }
+}*/
+
+async countBookingsForCustomer(customerId: number): Promise<number> {
+  return this.prisma.booking.count({
+    where: { customerId }
+  });
+}
+
+async deleteCustomer(id: number): Promise<void> {
+  console.log('[SERVICE] → deleteCustomer llamado con id:', id);
+
+  // 1. Buscar cliente
+  const existing = await this.customersRepository.findById(id);
+  console.log('[SERVICE] → Resultado de findById:', existing);
+
+  if (!existing) {
+    console.log('[SERVICE] ✖ CUSTOMER_NOT_FOUND');
+    throw new Error('CUSTOMER_NOT_FOUND');
+  }
+
+  // 2. Chequear reservas
+  console.log('[SERVICE] → Verificando reservas para cliente id:', id);
+  const bookingsCount = await this.customersRepository.countBookingsForCustomer(id);
+  console.log('[SERVICE] → Cantidad de reservas encontradas:', bookingsCount);
+
+  if (bookingsCount > 0) {
+    console.log('[SERVICE] ✖ CUSTOMER_HAS_BOOKINGS');
+    throw new Error('CUSTOMER_HAS_BOOKINGS');
+  }
+
+  // 3. Intentar eliminar
+  console.log('[SERVICE] → Intentando eliminar cliente id:', id);
+
+  try {
     await this.customersRepository.delete(id);
-  } catch (error) {
-    console.error('[CustomersService] Error al eliminar cliente:', error);
-    throw error;
+    console.log('[SERVICE] ✔ Cliente eliminado correctamente');
+  } catch (error: any) {
+    console.error('[SERVICE] ✖ Error en delete():', error);
+    throw new Error('DELETE_ERROR');
   }
 }
+
+
+
+
 
 }

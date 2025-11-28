@@ -3,6 +3,23 @@ import { Customer } from './customers.entity.js';
 import { CustomersService } from './customers.service.js';
 
 export class CustomersPostgresRepository {
+  prisma: any;
+
+  
+
+  async countBookingsForCustomer(customerId: number): Promise<number> {
+  const query = `
+    SELECT COUNT(*) AS total
+    FROM bookings
+    WHERE client_id = $1
+  `;
+
+  const result = await pool.query(query, [customerId]);
+
+  return Number(result.rows[0].total);
+}
+
+
 
 
   async findById(id: number): Promise<Customer | null> {
@@ -68,8 +85,8 @@ export class CustomersPostgresRepository {
   }
 
   async create(data: Partial<Customer>): Promise<Customer> {
-  try {
-    const query = `
+    try {
+      const query = `
       INSERT INTO customers (
         first_name,
         last_name,
@@ -86,25 +103,25 @@ export class CustomersPostgresRepository {
       RETURNING *;
     `;
 
-    const params = [
-      data.first_name ?? null,
-      data.last_name ?? null,
-      data.email ?? null,
-      data.password ?? null,
-      data.phone ?? null,
-      data.birth_date ?? null, // debe ser formato YYYY-MM-DD
-      data.status ?? 'pending',
-      data.role ?? 'customer'
-    ];
+      const params = [
+        data.first_name ?? null,
+        data.last_name ?? null,
+        data.email ?? null,
+        data.password ?? null,
+        data.phone ?? null,
+        data.birth_date ?? null, // debe ser formato YYYY-MM-DD
+        data.status ?? 'pending',
+        data.role ?? 'customer'
+      ];
 
-    const { rows } = await pool.query<Customer>(query, params);
-    return rows[0];
+      const { rows } = await pool.query<Customer>(query, params);
+      return rows[0];
 
-  } catch (error) {
-    console.error('[CustomersPostgresRepository] Error en create:', error);
-    throw new Error('Error al crear cliente');
+    } catch (error) {
+      console.error('[CustomersPostgresRepository] Error en create:', error);
+      throw new Error('Error al crear cliente');
+    }
   }
-}
 
 
   async update(id: number, data: Partial<Customer>): Promise<Customer> {
@@ -194,16 +211,17 @@ export class CustomersPostgresRepository {
     }
   }
 
+
+
   async delete(id: number): Promise<void> {
-    try {
-      const query = 'DELETE FROM customers WHERE id = $1';
-      const result = await pool.query(query, [id]);
-      if (result.rowCount === 0) {
-        throw new Error('CUSTOMER_NOT_FOUND');
-      }
-    } catch (error) {
-      throw new Error('Error al eliminar cliente');
+    const query = 'DELETE FROM customers WHERE id = $1';
+    const result = await pool.query(query, [id]);
+
+    if (result.rowCount === 0) {
+      throw new Error('CUSTOMER_NOT_FOUND');
     }
   }
+
+
 
 }

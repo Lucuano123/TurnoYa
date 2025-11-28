@@ -196,11 +196,16 @@ async createCustomer(req: Request, res: Response): Promise<void> {
       return;
     }
 
+    if (err.message === 'CUSTOMER_HAS_BOOKINGS') {
+      res.status(409).json({
+        message: 'El cliente no puede eliminarse porque tiene reservas asociadas.'
+      });
+      return;
+    }
+
     res.status(500).json({ message: 'Error al eliminar cliente' });
   }
-}
-
-
+ }
 
 
 
