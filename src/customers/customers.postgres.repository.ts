@@ -214,13 +214,23 @@ export class CustomersPostgresRepository {
 
 
   async delete(id: number): Promise<void> {
-    const query = 'DELETE FROM customers WHERE id = $1';
-    const result = await pool.query(query, [id]);
+  try {
+    const query = `DELETE FROM customers WHERE id = $1`;
+    await pool.query(query, [id]);
+  } catch (err: any) {
 
-    if (result.rowCount === 0) {
-      throw new Error('CUSTOMER_NOT_FOUND');
+    console.error('[Repository] Error eliminando cliente:', err);
+
+    // Detecta violación de FK de Postgres
+    if (err.code === '23503') {
+      throw new Error('CUSTOMER_HAS_BOOKINGS');
     }
+
+    throw new Error('DELETE_ERROR');
   }
+}
+
+
 
 
 

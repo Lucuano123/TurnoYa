@@ -182,14 +182,17 @@ async createCustomer(req: Request, res: Response): Promise<void> {
  async deleteCustomer(req: Request, res: Response): Promise<void> {
   try {
     const id = Number(req.params.id);
+    console.log('[Controller] DELETE /customers/', id);
 
     await this.customersService.deleteCustomer(id);
 
+    console.log('[Controller] Cliente eliminado OK');
     res.status(204).send(); // No Content
+
   } catch (error) {
     const err = error as Error;
 
-    console.error('[CustomersController] Error en deleteCustomer:', err);
+    console.error('[Controller] Error en deleteCustomer:', err.message);
 
     if (err.message === 'CUSTOMER_NOT_FOUND') {
       res.status(404).json({ message: 'Cliente no encontrado' });
@@ -205,7 +208,7 @@ async createCustomer(req: Request, res: Response): Promise<void> {
 
     res.status(500).json({ message: 'Error al eliminar cliente' });
   }
- }
+}
 
 
 

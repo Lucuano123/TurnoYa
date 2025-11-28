@@ -109,38 +109,21 @@ async countBookingsForCustomer(customerId: number): Promise<number> {
 }
 
 async deleteCustomer(id: number): Promise<void> {
-  console.log('[SERVICE] → deleteCustomer llamado con id:', id);
+  console.log('[Service] Eliminando cliente', id);
 
-  // 1. Buscar cliente
   const existing = await this.customersRepository.findById(id);
-  console.log('[SERVICE] → Resultado de findById:', existing);
 
   if (!existing) {
-    console.log('[SERVICE] ✖ CUSTOMER_NOT_FOUND');
+    console.log('[Service] Cliente no encontrado');
     throw new Error('CUSTOMER_NOT_FOUND');
   }
 
-  // 2. Chequear reservas
-  console.log('[SERVICE] → Verificando reservas para cliente id:', id);
-  const bookingsCount = await this.customersRepository.countBookingsForCustomer(id);
-  console.log('[SERVICE] → Cantidad de reservas encontradas:', bookingsCount);
+  console.log('[Service] Cliente existe, intentando eliminar...');
+  await this.customersRepository.delete(id);
 
-  if (bookingsCount > 0) {
-    console.log('[SERVICE] ✖ CUSTOMER_HAS_BOOKINGS');
-    throw new Error('CUSTOMER_HAS_BOOKINGS');
-  }
-
-  // 3. Intentar eliminar
-  console.log('[SERVICE] → Intentando eliminar cliente id:', id);
-
-  try {
-    await this.customersRepository.delete(id);
-    console.log('[SERVICE] ✔ Cliente eliminado correctamente');
-  } catch (error: any) {
-    console.error('[SERVICE] ✖ Error en delete():', error);
-    throw new Error('DELETE_ERROR');
-  }
+  console.log('[Service] Cliente eliminado OK');
 }
+
 
 
 
