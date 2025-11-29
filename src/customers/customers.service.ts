@@ -81,26 +81,6 @@ export class CustomersService {
     }
   }
 
-  /*async deleteCustomer(id: number): Promise<void> {
-
-  const existing = await this.customersRepository.findById(id);
-
-  if (!existing) {
-    throw new Error('CUSTOMER_NOT_FOUND');
-  }
-
-  try {
-    await this.customersRepository.delete(id);
-
-  } catch (error: any) {
-
-    if (error.code === '23503') {
-      throw new Error('CUSTOMER_HAS_BOOKINGS');
-    }
-
-    throw new Error('DELETE_ERROR');
-  }
-}*/
 
 async countBookingsForCustomer(customerId: number): Promise<number> {
   return this.prisma.booking.count({

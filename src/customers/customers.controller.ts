@@ -8,7 +8,7 @@ export class CustomersController {
   private customersService: CustomersService;
 
   constructor() {
-    
+
     const repository = new CustomersPostgresRepository();
     this.customersService = new CustomersService(repository);
   }
@@ -127,88 +127,98 @@ export class CustomersController {
   }
 
   // PUT /api/customers/:id
-async updateCustomer(req: Request, res: Response): Promise<void> {
-  try {
-    const { id } = req.params;
-    const data = req.body;
+  async updateCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const data = req.body;
 
-    const updated = await this.customersService.updateCustomer(parseInt(id), data);
+      const updated = await this.customersService.updateCustomer(parseInt(id), data);
 
-    res.status(200).json({ data: updated });
+      res.status(200).json({ data: updated });
 
-  } catch (error: any) {
-    console.error('[CustomersController] Error en updateCustomer:', error);
+    } catch (error: any) {
+      console.error('[CustomersController] Error en updateCustomer:', error);
 
-    if (error.message === 'CUSTOMER_NOT_FOUND') {
-      res.status(404).json({
-        error: { message: 'Cliente no encontrado', code: 'CUSTOMER_NOT_FOUND', status: 404 }
+      if (error.message === 'CUSTOMER_NOT_FOUND') {
+        res.status(404).json({
+          error: { message: 'Cliente no encontrado', code: 'CUSTOMER_NOT_FOUND', status: 404 }
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: { message: 'Error al actualizar cliente', code: 'SERVER_ERROR', status: 500 }
       });
-      return;
     }
-
-    res.status(500).json({
-      error: { message: 'Error al actualizar cliente', code: 'SERVER_ERROR', status: 500 }
-    });
   }
-}
 
   /// POST /api/customers
-async createCustomer(req: Request, res: Response): Promise<void> {
-  try {
-    console.log('---- [Controller] POST /api/customers ----');
-    console.log('[Controller] Body recibido:', req.body);
+  async createCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('---- [Controller] POST /api/customers ----');
+      console.log('[Controller] Body recibido:', req.body);
 
-    const data = req.body;
+      const data = req.body;
 
-    console.log('[Controller] Llamando al service.createCustomer...');
-    const newCustomer = await this.customersService.createCustomer(data);
-    console.log('[Controller] Respuesta del service:', newCustomer);
+      console.log('[Controller] Llamando al service.createCustomer...');
+      const newCustomer = await this.customersService.createCustomer(data);
+      console.log('[Controller] Respuesta del service:', newCustomer);
 
-    res.status(201).json({ data: newCustomer });
-  } catch (error) {
-    console.error('[Controller] Error en createCustomer:', error);
+      res.status(201).json({ data: newCustomer });
+    } catch (error: any) {
+      console.error('[Controller] Error en createCustomer:', error);
 
-    res.status(500).json({
-      error: {
-        message: 'Error al crear cliente',
-        code: 'SERVER_ERROR',
-        status: 500,
+      if (error.code === '23505' && error.constraint === 'customers_email_key') {
+        res.status(400).json({
+          error: {
+            message: 'El email ya está registrado',
+            code: 'EMAIL_DUPLICATE',
+            status: 400,
+          }
+        });
+        return;
       }
-    });
+      res.status(500).json({
+        error: {
+          message: 'Error al crear cliente',
+          code: 'SERVER_ERROR',
+          status: 500,
+        }
+      });
+    }
   }
-}
 
   // DELETE /api/customers/:id
- async deleteCustomer(req: Request, res: Response): Promise<void> {
-  try {
-    const id = Number(req.params.id);
-    console.log('[Controller] DELETE /customers/', id);
+  async deleteCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      console.log('[Controller] DELETE /customers/', id);
 
-    await this.customersService.deleteCustomer(id);
+      await this.customersService.deleteCustomer(id);
 
-    console.log('[Controller] Cliente eliminado OK');
-    res.status(204).send(); // No Content
+      console.log('[Controller] Cliente eliminado OK');
+      res.status(204).send();
 
-  } catch (error) {
-    const err = error as Error;
+    } catch (error) {
+      const err = error as Error;
 
-    console.error('[Controller] Error en deleteCustomer:', err.message);
+      console.error('[Controller] Error en deleteCustomer:', err.message);
 
-    if (err.message === 'CUSTOMER_NOT_FOUND') {
-      res.status(404).json({ message: 'Cliente no encontrado' });
-      return;
+      if (err.message === 'CUSTOMER_NOT_FOUND') {
+        res.status(404).json({ message: 'Cliente no encontrado' });
+        return;
+      }
+
+      if (err.message === 'CUSTOMER_HAS_BOOKINGS') {
+        res.status(409).json({
+          message: 'El cliente no puede eliminarse porque tiene reservas asociadas.'
+        });
+        return;
+      }
+
+      res.status(500).json({ message: 'Error al eliminar cliente' });
     }
-
-    if (err.message === 'CUSTOMER_HAS_BOOKINGS') {
-      res.status(409).json({
-        message: 'El cliente no puede eliminarse porque tiene reservas asociadas.'
-      });
-      return;
-    }
-
-    res.status(500).json({ message: 'Error al eliminar cliente' });
   }
-}
 
 
 
