@@ -2,6 +2,7 @@ import { CustomersPostgresRepository } from './customers.postgres.repository.js'
 import { Customer } from './customers.entity.js';
 
 export class CustomersService {
+  prisma: any;
   constructor(private customersRepository: CustomersPostgresRepository) { }
 
   // Actualiza el estado de un cliente (approve / reject)
@@ -79,19 +80,53 @@ export class CustomersService {
       throw error;
     }
   }
-  async deleteCustomer(id: number): Promise<void> {
-  try {
-    const existing = await this.customersRepository.findById(id);
 
-    if (!existing) {
-      throw new Error('CUSTOMER_NOT_FOUND');
+  /*async deleteCustomer(id: number): Promise<void> {
+
+  const existing = await this.customersRepository.findById(id);
+
+  if (!existing) {
+    throw new Error('CUSTOMER_NOT_FOUND');
+  }
+
+  try {
+    await this.customersRepository.delete(id);
+
+  } catch (error: any) {
+
+    if (error.code === '23503') {
+      throw new Error('CUSTOMER_HAS_BOOKINGS');
     }
 
-    await this.customersRepository.delete(id);
-  } catch (error) {
-    console.error('[CustomersService] Error al eliminar cliente:', error);
-    throw error;
+    throw new Error('DELETE_ERROR');
   }
+}*/
+
+async countBookingsForCustomer(customerId: number): Promise<number> {
+  return this.prisma.booking.count({
+    where: { customerId }
+  });
 }
+
+async deleteCustomer(id: number): Promise<void> {
+  console.log('[Service] Eliminando cliente', id);
+
+  const existing = await this.customersRepository.findById(id);
+
+  if (!existing) {
+    console.log('[Service] Cliente no encontrado');
+    throw new Error('CUSTOMER_NOT_FOUND');
+  }
+
+  console.log('[Service] Cliente existe, intentando eliminar...');
+  await this.customersRepository.delete(id);
+
+  console.log('[Service] Cliente eliminado OK');
+}
+
+
+
+
+
 
 }

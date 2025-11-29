@@ -100,3 +100,7 @@ Content-Type: application/json
   "role": "customer"
 }
 
+#####
+
+DELETE http://localhost:3000/api/customers/1
+x-user-id: 11
