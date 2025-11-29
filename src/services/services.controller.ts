@@ -51,7 +51,7 @@ export class ServicesController {
       res.status(404).json({ message: 'Service not found' });
     }
   }
-  
+
   async partialUpdateService(req: Request, res: Response): Promise<void> {
     const id = req.params.id;
     const updates: Partial<Services> = req.body;
@@ -65,11 +65,19 @@ export class ServicesController {
 
   async deleteService(req: Request, res: Response): Promise<void> {
     const id = req.params.id;
-    const deletedService = await this.servicesRepository.delete(id);
-    if (deletedService) {
-      res.json(deletedService);
-    } else {
-      res.status(404).json({ message: 'Service not found' });
+    try {
+      const deletedService = await this.servicesRepository.delete(id);
+      if (deletedService) {
+        res.json(deletedService);
+      } else {
+        res.status(404).json({ message: 'Service not found' });
+      }
+    } catch (error: any) {
+      if (error.code === '23503') {
+        res.status(409).json({ message: 'No se puede eliminar: el servicio tiene reservas asociadas.' });
+      } else {
+        res.status(500).json({ message: 'Internal server error' });
+      }
     }
   }
 }
